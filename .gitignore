@@ -1,0 +1,20 @@
+# Config local (não versionar credenciais do Supabase)
+config.local.js
+.env
+.env.*
+
+# Sistema operativo
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Editores
+.vscode/
+.idea/
+*.swp
+
+# Backups / temporários
+*.bak
+*.tmp
+backup*.json
