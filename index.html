@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0a120e">
-<title>Elite Referees AFA</title>
+<meta name="theme-color" content="#0a120e" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#eef4ef" media="(prefers-color-scheme: light)">
+<title>Arbitragem — Ganhos &amp; Despesas</title>
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
 :root{
   --bg:#0a120e; --bg-grad:radial-gradient(1100px 480px at 50% -8%, rgba(52,211,153,.16), transparent 62%);
@@ -17,34 +19,75 @@
   --grad:linear-gradient(135deg,#059669,#34d399);
   --warn:#fbbf24; --err:#f87171; --blue:#60a5fa; --gray:#94a3b8;
   --r:16px; --shadow:0 10px 26px rgba(0,0,0,.32);
+  /* Fundo de botões e filtros com texto branco: o --grad claro dava 1,9:1 a 3,8:1
+     de contraste. Este dá 5,5:1 a 7:1 (WCAG AA pede 4,5:1) em qualquer tema. */
+  --grad-txt:linear-gradient(135deg,#065f46,#047857);
+  --hdr-bg:rgba(10,18,14,.78); --tab-bg:rgba(17,28,22,.88);
+  --card-img:linear-gradient(180deg,rgba(24,40,33,.55),rgba(17,28,22,1));
 }
 @media (prefers-color-scheme: light){
   :root{--bg:#eef4ef;--bg-grad:radial-gradient(1100px 480px at 50% -8%, rgba(16,185,129,.14), transparent 62%);
-  --card:#ffffff;--card2:#e7f1ea;--line:#d3e3d8;--txt:#122019;--mut:#5c7466;
+  --card:#ffffff;--card2:#e7f1ea;--line:#d3e3d8;--txt:#122019;--mut:#51685b;
   --acc:#059669;--acc2:#059669;--grad:linear-gradient(135deg,#047857,#10b981);
-  --warn:#b45309;--err:#dc2626;--blue:#2563eb;--gray:#64748b;--shadow:0 8px 22px rgba(15,50,35,.10)}
+  --warn:#b45309;--err:#dc2626;--blue:#2563eb;--gray:#64748b;--shadow:0 8px 22px rgba(15,50,35,.10);
+  --hdr-bg:rgba(238,244,239,.82);--tab-bg:rgba(255,255,255,.88);--card-img:none}
 }
+/* Tema escolhido à mão em Definições -> Aparência. O atributo data-tema no
+   <html> ganha ao que o sistema diz; sem atributo, manda o sistema. */
+html[data-tema="claro"]{
+  --bg:#eef4ef;--bg-grad:radial-gradient(1100px 480px at 50% -8%, rgba(16,185,129,.14), transparent 62%);
+  --card:#ffffff;--card2:#e7f1ea;--line:#d3e3d8;--txt:#122019;--mut:#51685b;
+  --acc:#059669;--acc2:#059669;--grad:linear-gradient(135deg,#047857,#10b981);
+  --warn:#b45309;--err:#dc2626;--blue:#2563eb;--gray:#64748b;--shadow:0 8px 22px rgba(15,50,35,.10);
+  --hdr-bg:rgba(238,244,239,.82);--tab-bg:rgba(255,255,255,.88);--card-img:none}
+html[data-tema="escuro"]{
+  --bg:#0a1310;--bg-grad:radial-gradient(1100px 480px at 50% -8%, rgba(16,185,129,.16), transparent 62%);
+  --card:#111c16;--card2:#182821;--line:#233b2e;--txt:#eef6f0;--mut:#8fa99a;
+  --acc:#34d399;--acc2:#10b981;--grad:linear-gradient(135deg,#059669,#34d399);
+  --warn:#fbbf24;--err:#f87171;--blue:#60a5fa;--gray:#94a3b8;--shadow:0 10px 26px rgba(0,0,0,.32);
+  --hdr-bg:rgba(10,18,14,.78);--tab-bg:rgba(17,28,22,.88);
+  --card-img:linear-gradient(180deg,rgba(24,40,33,.55),rgba(17,28,22,1))}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:6px}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 html{font-size:16px}
 body{background:var(--bg);background-image:var(--bg-grad);background-repeat:no-repeat;color:var(--txt);
  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-bottom:calc(78px + env(safe-area-inset-bottom));min-height:100vh}
 header{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:10px;
  padding:calc(12px + env(safe-area-inset-top)) 16px 10px;
- background:rgba(10,18,14,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-@media (prefers-color-scheme: light){header{background:rgba(238,244,239,.82)}}
-.brand{display:flex;align-items:center;gap:12px;min-width:0}
-.emblem{width:42px;height:42px;border-radius:14px;background:var(--grad);display:flex;align-items:center;justify-content:center;
+ background:var(--hdr-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px;min-width:0;flex:1 1 auto;overflow:hidden}
+.brand>div{min-width:0}
+.team,header h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.emblem{width:42px;height:42px;border-radius:14px;background:var(--grad-txt);display:flex;align-items:center;justify-content:center;
  font-weight:900;color:#fff;font-size:.9rem;letter-spacing:.02em;box-shadow:0 4px 14px rgba(16,185,129,.38);flex:0 0 auto}
-.team{font-size:.6rem;font-weight:800;letter-spacing:.16em;color:var(--acc);text-transform:uppercase}
+.team{font-size:.72rem;font-weight:800;letter-spacing:.16em;color:var(--acc);text-transform:uppercase}
 header h1{font-size:1.28rem;font-weight:800;letter-spacing:-.02em;line-height:1.15}
 .epoca-pill{font-size:.7rem;font-weight:700;color:var(--acc);background:rgba(52,211,153,.12);
  border:1px solid rgba(52,211,153,.3);padding:5px 11px;border-radius:99px;white-space:nowrap}
+.hright{display:flex;align-items:center;gap:8px;flex:0 0 auto;max-width:62%}
+/* A 375 px o cabeçalho não tem espaço para tudo: a linha da equipa é
+   identidade, não informação, e a palavra "Época" é redundante ao lado do ano. */
+@media (max-width:430px){
+  .team{display:none}
+  .epoca-pill .rot-longo{display:none}
+  header{padding-top:calc(10px + env(safe-area-inset-top));gap:8px}
+  header h1{font-size:1.12rem}
+  .brand{gap:9px}
+  .emblem{width:34px;height:34px;border-radius:11px;font-size:.78rem}
+  .epoca-pill,.syncdot{padding:5px 9px;font-size:.68rem}
+}
+.syncdot{border:1px solid var(--line);background:var(--card2);color:var(--mut);border-radius:99px;
+ padding:5px 10px;font-size:.72rem;font-weight:700;line-height:1;white-space:nowrap;cursor:pointer;
+ font-family:inherit;transition:color .2s,border-color .2s}
+.syncdot.a{color:var(--blue);border-color:rgba(96,165,250,.45)}
+.syncdot.ok{color:var(--acc);border-color:rgba(52,211,153,.4)}
+.syncdot.e{color:var(--err);border-color:rgba(248,113,113,.45)}
 main{padding:14px 14px 28px;max-width:640px;margin:0 auto}
 .tabbar{position:fixed;bottom:0;left:0;right:0;z-index:30;display:flex;
- background:rgba(17,28,22,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+ background:var(--tab-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
  border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
-@media (prefers-color-scheme: light){.tabbar{background:rgba(255,255,255,.88)}}
-.tabbar button{flex:1;position:relative;background:none;border:none;color:var(--mut);font-size:.66rem;font-weight:600;
+.tabbar button{flex:1;position:relative;background:none;border:none;color:var(--mut);font-size:.74rem;font-weight:600;
  padding:9px 0 11px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:color .2s}
 .tabbar button .ic{font-size:1.3rem;line-height:1.15;transition:transform .2s}
 .tabbar button.on{color:var(--acc)}
@@ -52,13 +95,12 @@ main{padding:14px 14px 28px;max-width:640px;margin:0 auto}
 .tabbar button.on::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:26px;height:3px;
  border-radius:0 0 4px 4px;background:var(--grad)}
 .fab{position:fixed;right:18px;bottom:calc(82px + env(safe-area-inset-bottom));z-index:29;width:58px;height:58px;border-radius:19px;
- border:none;background:var(--grad);color:#fff;font-size:1.9rem;line-height:1;box-shadow:0 10px 24px rgba(16,185,129,.42);
+ border:none;background:var(--grad-txt);color:#fff;font-size:1.9rem;line-height:1;box-shadow:0 10px 24px rgba(16,185,129,.42);
  cursor:pointer;transition:transform .15s}
 .fab:active{transform:scale(.9) rotate(90deg)}
-.card{background:linear-gradient(180deg,rgba(24,40,33,.55),rgba(17,28,22,1));background-color:var(--card);
+.card{background:var(--card-img);background-color:var(--card);
  border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:12px;box-shadow:var(--shadow);
  animation:fadeUp .3s ease both}
-@media (prefers-color-scheme: light){.card{background:var(--card)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
 .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .mut{color:var(--mut);font-size:.8rem}
@@ -66,7 +108,7 @@ main{padding:14px 14px 28px;max-width:640px;margin:0 auto}
 .big,.val{font-variant-numeric:tabular-nums}
 .val{font-weight:700;color:var(--acc)}
 .neg{color:var(--err)}
-.badge{font-size:.66rem;padding:3px 9px;border-radius:99px;font-weight:700;white-space:nowrap;letter-spacing:.02em}
+.badge{font-size:.72rem;padding:3px 9px;border-radius:99px;font-weight:700;white-space:nowrap;letter-spacing:.02em}
 .b-agendado{background:rgba(96,165,250,.16);color:var(--blue)}
 .b-realizado{background:rgba(251,191,36,.14);color:var(--warn)}
 .b-pago{background:rgba(52,211,153,.15);color:var(--acc)}
@@ -75,27 +117,37 @@ main{padding:14px 14px 28px;max-width:640px;margin:0 auto}
 .datebox{flex:0 0 auto;width:48px;height:54px;border-radius:13px;background:var(--card2);border:1px solid var(--line);
  display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05;gap:1px}
 .datebox .dd{font-size:1.2rem;font-weight:800}
-.datebox .mm{font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--acc)}
+.datebox .mm{font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--acc)}
 .jmain{flex:1;min-width:0}
 .teams{font-weight:700;font-size:.98rem;line-height:1.25}
 .teams .vs{color:var(--mut);font-weight:600;font-size:.72rem;padding:0 3px;text-transform:uppercase}
-.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;scrollbar-width:none}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:8px 2px 12px;margin-top:-6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+/* Há mais filtros para a direita: a ponta desvanece, para se perceber que dá para deslizar. */
+.chips.mais{-webkit-mask-image:linear-gradient(to right,#000 82%,transparent);mask-image:linear-gradient(to right,#000 82%,transparent)}
+/* Com rato não há como deslizar uma linha sem barra de scroll: no computador
+   os filtros passam para a linha de baixo e ficam todos à vista. */
+@media (hover:hover) and (pointer:fine){.chips{flex-wrap:wrap;overflow:visible}.chips.mais{-webkit-mask-image:none;mask-image:none}}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex:0 0 auto;background:var(--card);border:1px solid var(--line);color:var(--mut);border-radius:99px;
- padding:7px 15px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .18s}
-.chip.on{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 4px 12px rgba(16,185,129,.35)}
+ padding:0 16px;min-height:44px;display:inline-flex;align-items:center;font-size:.85rem;font-weight:600;
+ cursor:pointer;transition:all .18s}
+.chip.on{background:var(--grad-txt);border-color:transparent;color:#fff;box-shadow:0 4px 12px rgba(16,185,129,.35)}
 select,input,textarea{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:12px;color:var(--txt);
- padding:11px 13px;font-size:1rem;font-family:inherit;transition:border-color .15s,box-shadow .15s}
+ padding:12px 13px;min-height:46px;font-size:1rem;font-family:inherit;transition:border-color .15s,box-shadow .15s}
+textarea{min-height:96px}
 select:focus,input:focus,textarea:focus{outline:none;border-color:var(--acc2);box-shadow:0 0 0 3px rgba(16,185,129,.22)}
 label{display:block;font-size:.74rem;color:var(--mut);margin:11px 0 5px;font-weight:700;letter-spacing:.02em}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .btn{border:none;border-radius:12px;padding:11px 16px;font-size:.92rem;font-weight:700;cursor:pointer;
  background:var(--card2);color:var(--txt);transition:transform .12s,filter .15s}
 .btn:active{transform:scale(.97)}
-.btn.pri{background:var(--grad);color:#fff;box-shadow:0 4px 14px rgba(16,185,129,.3)}
+.btn.pri{background:var(--grad-txt);color:#fff;box-shadow:0 4px 14px rgba(16,185,129,.3)}
 .btn.dngr{background:rgba(248,113,113,.13);color:var(--err)}
-.btn.sm{padding:6px 12px;font-size:.78rem;border-radius:9px}
+.btn.sm{padding:8px 13px;font-size:.8rem;border-radius:10px;min-height:44px}
 .btnrow{display:flex;gap:8px;margin-top:14px}
+/* As ações do cartão quebram para a linha seguinte em vez de empurrarem o
+   total para fora — com alvos de 44 px já não cabem todas a 375 px. */
+.acoes{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
 .btnrow .btn{flex:1}
 dialog{border:none;border-radius:22px 22px 0 0;background:var(--card);color:var(--txt);width:100%;max-width:640px;
  margin:auto auto 0;padding:14px 16px calc(20px + env(safe-area-inset-bottom));max-height:92vh;overflow-y:auto;
@@ -108,6 +160,13 @@ dialog h2{font-size:1.08rem;font-weight:800;margin-bottom:4px}
 .atr{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:11px;margin-top:10px}
 .atr .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
 .atr .calc{font-size:.83rem;margin-top:9px;display:flex;justify-content:space-between;align-items:center}
+details{margin-top:12px;border-top:1px solid var(--line);padding-top:4px}
+details summary{cursor:pointer;list-style:none;padding:11px 0;font-size:.78rem;font-weight:700;color:var(--mut);
+ letter-spacing:.02em;display:flex;align-items:center;gap:6px;min-height:44px}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"›";display:inline-block;transition:transform .2s;font-size:1.1rem;line-height:1}
+details[open] summary::before{transform:rotate(90deg)}
+.atr details{margin-top:8px}
 .warn{color:var(--warn);font-size:.77rem;margin-top:6px}
 .list-item{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);gap:8px}
 .list-item:last-child{border-bottom:none}
@@ -120,1138 +179,123 @@ dialog h2{font-size:1.08rem;font-weight:800;margin-bottom:4px}
 .sico{font-size:1.25rem;width:40px;height:40px;border-radius:12px;background:var(--card2);border:1px solid var(--line);
  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
 canvas{width:100%;height:170px}
-h3.sec{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin:20px 0 9px;font-weight:800}
-.iconbtn{background:none;border:none;color:var(--mut);font-size:1.05rem;cursor:pointer;padding:6px;border-radius:8px;transition:color .15s}
+h3.sec{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);margin:20px 0 9px;font-weight:800;
+ scroll-margin-top:76px}
+.iconbtn{background:none;border:none;color:var(--mut);font-size:1.05rem;cursor:pointer;padding:6px;border-radius:8px;
+ min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;transition:color .15s}
+/* Apagar afastado de editar, e com a cor do perigo: estavam colados, do mesmo
+   tamanho e da mesma cor, em membros, tarifas, almoços e distâncias. */
+.iconbtn[data-delm],.iconbtn[data-delt],.iconbtn[data-dela],.iconbtn[data-deld],
+.iconbtn[data-delk],.iconbtn[data-delf],.iconbtn[data-pgdel]{margin-left:10px;color:var(--err);opacity:.75}
+.iconbtn[data-delm]:active,.iconbtn[data-delt]:active,.iconbtn[data-dela]:active,
+.iconbtn[data-deld]:active,.iconbtn[data-delk]:active,.iconbtn[data-delf]:active{opacity:1}
 .iconbtn:active{color:var(--txt)}
 .sub{font-size:.85rem}
-.tag{font-size:.68rem;background:var(--card2);border:1px solid var(--line);border-radius:7px;padding:1px 7px;color:var(--mut);font-weight:600}
+.tag{font-size:.72rem;background:var(--card2);border:1px solid var(--line);border-radius:7px;padding:1px 7px;color:var(--mut);font-weight:600}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(94px + env(safe-area-inset-bottom));
  background:var(--card2);border:1px solid var(--line);border-left:3px solid var(--acc2);color:var(--txt);
  padding:11px 18px;border-radius:14px;font-size:.85rem;z-index:99;opacity:0;transition:opacity .25s,transform .25s;
  pointer-events:none;box-shadow:var(--shadow)}
+.toast{display:flex;align-items:center;gap:12px}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+.toast.com-accao{pointer-events:auto}
+.toast.erro{border-left-color:var(--err)}
+.toast button{flex:0 0 auto}
+#relatorio{display:none;position:fixed;inset:0;z-index:200;overflow-y:auto;background:#fff;color:#111827;
+ padding:16px 16px 48px;font-size:.88rem;line-height:1.45;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body.rel-on{overflow:hidden}
+body.rel-on #relatorio{display:block}
+#relatorio h1{font-size:1.15rem;margin-bottom:2px}
+#relatorio h2{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:#6b7280;margin:18px 0 6px}
+#relatorio .meta{color:#6b7280;font-size:.8rem;margin-bottom:6px}
+#relatorio table{width:100%;border-collapse:collapse}
+#relatorio th,#relatorio td{border-bottom:1px solid #e5e7eb;padding:5px 4px;text-align:left;vertical-align:top}
+#relatorio th{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;font-weight:700}
+#relatorio td.n,#relatorio th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+#relatorio tfoot td{font-weight:800;border-top:2px solid #111827;border-bottom:none}
+.rel-bar{position:sticky;top:0;background:#fff;display:flex;gap:8px;justify-content:flex-end;padding-bottom:10px;margin-bottom:6px}
+/* Quem pediu ao sistema menos movimento não leva com cartões a subir, folhas a
+   deslizar nem o + a rodar. */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .fab:active{transform:none}
+}
+@media print{
+  body>*{display:none!important}
+  body.rel-on #relatorio{display:block!important;position:static;padding:0;font-size:11pt}
+  .no-print{display:none!important}
+  #relatorio h2{page-break-after:avoid}
+  #relatorio table{page-break-inside:auto}
+  #relatorio tr{page-break-inside:avoid}
+}
+.upbar{position:fixed;left:12px;right:12px;bottom:calc(88px + env(safe-area-inset-bottom));z-index:40;
+ display:flex;align-items:center;gap:10px;background:var(--card2);border:1px solid var(--line);
+ border-left:3px solid var(--acc2);border-radius:14px;padding:11px 13px;box-shadow:var(--shadow);
+ max-width:616px;margin:0 auto;animation:fadeUp .3s ease both}
+.upbar .txt{flex:1;min-width:0;font-size:.84rem;font-weight:600}
+/* A barra da nova versão fica exatamente onde está o botão +: num telemóvel o
+   toque no + caía no "Atualizar" (que recarregava a app) e nunca abria o
+   formulário. Com a barra visível, o + e os avisos sobem para cima dela. */
+body.com-upbar .fab{bottom:calc(166px + env(safe-area-inset-bottom))}
+body.com-upbar .toast{bottom:calc(172px + env(safe-area-inset-bottom))}
 #loginScr{position:fixed;inset:0;z-index:100;background:var(--bg);background-image:var(--bg-grad);display:flex;align-items:center;justify-content:center;padding:24px}
-.lbox{width:100%;max-width:380px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px 22px;box-shadow:var(--shadow);animation:fadeUp .3s ease both}
+.lbox{width:100%;max-width:380px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px 22px;box-shadow:var(--shadow);animation:fadeUp .3s ease both;max-height:92vh;overflow-y:auto}
+.bv-linha{margin-top:8px}
 body.login-on header,body.login-on main,body.login-on .tabbar,body.login-on .fab,body.login-on .toast{display:none}
+/* As despesas são de cada um: aí o assistente também lança, edita e apaga
+   as SUAS. Mais específico do que a regra de baixo, por isso ganha. */
+body.ro.tab-despesas .fab{display:block!important}
 body.ro .fab,body.ro [data-act],body.ro [data-pgadd],body.ro [data-pgdel],body.ro [data-rm],body.ro #addAtr,
 body.ro [data-editm],body.ro [data-delm],body.ro #addM,body.ro [data-editt],body.ro [data-delt],body.ro #addT,
 body.ro [data-edita],body.ro [data-dela],body.ro #addA,body.ro [data-editd],body.ro [data-deld],body.ro #addD,
+body.ro [data-editk],body.ro [data-delk],body.ro #addK,body.ro [data-tick],
+body.ro [data-editf],body.ro [data-delf],body.ro #addF,
 body.ro #cSave,body.ro #cNova,body.ro #reset,body.ro #mrgJson,body.ro #impJson,body.ro #btnConv{display:none!important}
 </style>
 </head>
 <body>
 <header>
-  <div class="brand"><div class="emblem">ER</div>
-    <div><div class="team">Elite Referees · AFA</div><h1 id="hTitle">Jogos</h1></div>
+  <div class="brand"><div class="emblem" id="hEmblema">AR</div>
+    <div><div class="team" id="hEquipa"></div><h1 id="hTitle">Jogos</h1></div>
   </div>
-  <div class="epoca-pill" id="hEpoca"></div>
+  <div class="hright">
+    <button class="syncdot" id="hSync" hidden aria-live="polite" title="Estado da sincronização" aria-label="Estado da sincronização"></button>
+    <div class="epoca-pill" id="hEpoca"></div>
+  </div>
 </header>
 <main id="main"></main>
-<button class="fab" id="fab" aria-label="Adicionar">+</button>
-<nav class="tabbar">
-  <button data-tab="jogos" class="on"><span class="ic">⚽</span>Jogos</button>
-  <button data-tab="despesas"><span class="ic">🧾</span>Despesas</button>
-  <button data-tab="multas"><span class="ic">⚖️</span>Multas</button>
-  <button data-tab="resumo"><span class="ic">📊</span>Resumo</button>
-  <button data-tab="config"><span class="ic">⚙️</span>Definições</button>
+<button class="fab" id="fab" aria-label="Adicionar jogo">+</button>
+<nav class="tabbar" aria-label="Secções da aplicação">
+  <button data-tab="jogos" class="on" aria-current="page"><span class="ic" aria-hidden="true">⚽</span>Jogos</button>
+  <button data-tab="despesas"><span class="ic" aria-hidden="true">🧾</span>Despesas</button>
+  <button data-tab="multas"><span class="ic" aria-hidden="true">⚖️</span>Multas</button>
+  <button data-tab="resumo"><span class="ic" aria-hidden="true">📊</span>Resumo</button>
+  <button data-tab="config"><span class="ic" aria-hidden="true">⚙️</span>Definições</button>
 </nav>
 <dialog id="dlg"></dialog>
-<div class="toast" id="toast"></div>
+<dialog id="dlg2"></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script>
-"use strict";
-/* ============ Estado ============ */
-const KEY="arbApp_v1";
-// ▼ Preenche uma vez com os dados do projeto Supabase da equipa (Project Settings → API).
-//   Com isto preenchido, o ecrã de login só pede email + password.
-const SB_CONFIG={url:"",key:""};
-const FUNCOES=["1 arb","2 arb","A","AA"];
-const mapFuncao=f=>({principal:"A",bandeirinha:"AA"}[String(f||"").trim().toLowerCase()]||f);
-const ESTADOS=["agendado","realizado","pago","cancelado"];
-const MESES_EPOCA=[8,9,10,11,0,1,2,3,4,5]; // Set..Jun (0-based)
-const NOME_MES=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
-
-function seedArtigos(){
-  const a=[[1,"Dispensa em cima do dia de jogo",5,0],[2,"Indisponibilidade comunicada fora de prazo",3,0],
-  [3,"Não confirmar nomeação até às 22h",2,0],[4,"Não marcar horas até às 20h da véspera",2,0],
-  [5,"Divulgar nomeações a terceiros",10,0],[6,"Atraso (por minuto, após 10 min de tolerância)",2,1],
-  [7,"Falta de fato de treino (2ª Div. Distrital)",3,0],[8,"Falta de camisa/polo e calça de sarja (1ª Div.)",5,0],
-  [9,"Falta de camisa/polo e calça (Camp. SABSEG)",10,0],[10,"Falta de material obrigatório",5,0],
-  [11,"Carregar +5x após o banho (por clique extra)",2,1],[12,"Sujar o carro por falta de cuidado",10,0],
-  [13,"Erro no relatório Score",5,0],[14,"Erro nas fichas de jogo (os 3 elementos)",10,0],
-  [15,"Equipamento mal preparado",3,0],[16,"Não comunicar atraso logo que conhecido",2,0],
-  [17,"Falta de respeito (imagem da equipa)",5,0],[18,"Não cumprir tarefa previamente aceite",3,0],
-  [20,"Ausência em formação/reunião obrigatória",10,0],[21,"Desistência de evento após confirmação",10,0],
-  [22,"Não comunicar impedimento para nomeação",5,0],[23,"Incumprir orientações do Chefe de Equipa",5,0]];
-  return a.map(x=>({id:"art"+x[0],num:x[0],nome:x[1],valor:x[2],porUnidade:!!x[3]}));
-}
-function seed(){
-  const t=[["Distrital","sub 10 BEM","1 arb",15],["Distrital","sub 10 BEM","2 arb",10],
-  ["Distrital","sub 12 INF","1 arb",22.5],["Distrital","sub 12 INF","2 arb",15],
-  ["Distrital","sub 14 IN","A",23],["Distrital","sub 14 IN","AA",18.5],
-  ["Distrital","sub 16 JUV","A",24],["Distrital","sub 16 JUV","AA",19.5],
-  ["Distrital","Sub 19 JUN","A",25],["Distrital","Sub 19 JUN","AA",20.5],
-  ["Distrital","sub 23/vet","A",30],["Distrital","sub 23/vet","AA",24],
-  ["Distrital","taça de honra","A",39],["Distrital","taça de honra","AA",33],
-  ["Distrital","2ª divisão","A",34],["Distrital","2ª divisão","AA",28],
-  ["Distrital","1ª divisão","A",39],["Distrital","1ª divisão","AA",33],
-  ["Nacional","Sub 15","AA",35],["Nacional","Sub 17","AA",47.5],
-  ["Nacional","Sub 19","AA",47.5],["Nacional","Fem","AA",47]];
-  return {
-    version:2,
-    settings:{epocaAtivaId:"e1",membroEuId:"",mostrarEquipa:true},
-    epocas:[{id:"e1",nome:"2025/26",anoInicio:2025,valorKm:0.36,deslocacoes:[{tipo:"Distrital",modo:"fixo",valor:15},{tipo:"Nacional",modo:"km",valor:0.36}]}],
-    membros:["Bruno Moreira","Pedro Moreira","Ânia Gomes","Gabriel Figueiredo","Xavier Bastos","Tiago"].map((n,i)=>({id:"m"+(i+1),nome:n})),
-    tabela:t.map((r,i)=>({id:"t"+(i+1),epocaId:"e1",tipo:r[0],escalao:r[1],funcao:r[2],valor:r[3]})),
-    almocos:[{id:"a1",epocaId:"e1",nome:"Distrital",valor:7.5},{id:"a2",epocaId:"e1",nome:"Nacional",valor:17.5},{id:"a3",epocaId:"e1",nome:"Nacional +100km",valor:35}],
-    categorias:["Equipamento","Inscrição","Deslocação","Formação","Quotas","Outro"],
-    jogos:[],despesas:[],multas:[],pagamentos:[],artigos:seedArtigos(),tombs:[]
-  };
-}
-function migrate(s){
-  if(!s.epocas){
-    const e={id:"e1",nome:(s.settings&&s.settings.epoca)||"2025/26",anoInicio:(s.settings&&s.settings.anoInicio)||2025,valorKm:(s.settings&&s.settings.valorKm!=null)?s.settings.valorKm:0.36};
-    s.epocas=[e];
-    s.settings=s.settings||{};
-    s.settings.epocaAtivaId=e.id;
-    for(const c of ["tabela","almocos","jogos","despesas"])for(const it of (s[c]||[]))if(!it.epocaId)it.epocaId=e.id;
-    s.version=2;
-  }
-  s.tombs=s.tombs||[];
-  if(!s.settings.epocaAtivaId||!s.epocas.some(e=>e.id===s.settings.epocaAtivaId))s.settings.epocaAtivaId=s.epocas[0].id;
-  if(s.settings.membroEuId===undefined)s.settings.membroEuId="";
-  s.multas=s.multas||[];
-  s.pagamentos=s.pagamentos||[];
-  for(const t of (s.tabela||[]))t.funcao=mapFuncao(t.funcao);
-  for(const j of (s.jogos||[]))for(const a of (j.atribuicoes||[]))a.funcao=mapFuncao(a.funcao);
-  if(!s.artigos||!s.artigos.length)s.artigos=seedArtigos();
-  for(const e of s.epocas)if(!e.deslocacoes)e.deslocacoes=[{tipo:"Distrital",modo:"fixo",valor:15},{tipo:"Nacional",modo:"km",valor:(e.valorKm!=null?e.valorKm:0.36)}];
-  return s;
-}
-let S; try{S=JSON.parse(localStorage.getItem(KEY))||seed();}catch(e){S=seed();}
-S=migrate(S);
-function epAtiva(){return S.epocas.find(e=>e.id===S.settings.epocaAtivaId)||S.epocas[0];}
-const daEpoca=x=>x.epocaId===epAtiva().id;
-function tomb(col,id){S.tombs.push({col,id,t:Date.now()});}
-function save0(){localStorage.setItem(KEY,JSON.stringify(S));}
-function save(){save0();scheduleSync();}
-const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
-const $=(s,el=document)=>el.querySelector(s);
-const $$=(s,el=document)=>[...el.querySelectorAll(s)];
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const fmt=n=>new Intl.NumberFormat("pt-PT",{style:"currency",currency:"EUR"}).format(n||0);
-const fmtD=d=>{const[y,m,dd]=d.split("-");return `${dd}/${m}/${y}`;};
-const diaSem=d=>["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"][new Date(d+"T12:00").getDay()];
-function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200);}
-
-/* ============ Motor de cálculo ============ */
-const norm=s=>String(s||"").trim().toLowerCase();
-function lookup(tipo,escalao,funcao){
-  return S.tabela.find(r=>daEpoca(r)&&norm(r.tipo)===norm(tipo)&&norm(r.escalao)===norm(escalao)&&norm(r.funcao)===norm(funcao));
-}
-function deslocRule(tipo){
-  return (epAtiva().deslocacoes||[]).find(d=>norm(d.tipo)===norm(tipo))||null;
-}
-function atrCalc(j,a){
-  const r=lookup(j.tipo,j.escalao,a.funcao);
-  const base=r?r.valor:0;
-  const alm=a.almocoId?(S.almocos.find(x=>x.id===a.almocoId)?.valor||0):0;
-  const dr=deslocRule(j.tipo);
-  let km;
-  if(dr)km=dr.modo==="fixo"?(a.deslocFixa?dr.valor:0):(parseFloat(a.km)||0)*dr.valor;
-  else km=(parseFloat(a.km)||0)*(epAtiva().valorKm||0);
-  return {base,alm,km,total:base+alm+km,found:!!r};
-}
-function atrFinal(j,a){
-  if(a.override!==null&&a.override!==undefined&&a.override!=="")return parseFloat(a.override)||0;
-  return atrCalc(j,a).total;
-}
-function jogoTotal(j){return (j.atribuicoes||[]).filter(a=>a.membroId).reduce((s,a)=>s+atrFinal(j,a),0);}
-function temRecebido(j){return j.valorRecebido!==undefined&&j.valorRecebido!==null&&j.valorRecebido!=="";}
-
-/* ============ Navegação ============ */
-let tab="jogos";
-let membroSel="all";
-let mesSel=(()=>{const cur=new Date().toISOString().slice(0,7);return mesesDaEpoca().includes(cur)?cur:"all";})();
-$$(".tabbar button").forEach(b=>b.onclick=()=>{
-  keepScrollY=null;window.scrollTo(0,0);
-  tab=b.dataset.tab;
-  $$(".tabbar button").forEach(x=>x.classList.toggle("on",x===b));
-  render();
-});
-$("#fab").onclick=()=>{ if(soLeitura())return; if(tab==="despesas")formDespesa(); else if(tab==="multas")formMulta(); else formJogo(); };
-
-function mesesDaEpoca(){
-  const y=epAtiva().anoInicio;
-  return MESES_EPOCA.map(m=>{const yy=m>=8?y:y+1;return `${yy}-${String(m+1).padStart(2,"0")}`;});
-}
-function render(){
-  $("#hEpoca").textContent="Época "+epAtiva().nome+(typeof SY!=="undefined"&&SY.ro?" · 👀":"");
-  document.body.classList.toggle("ro",typeof SY!=="undefined"&&!!SY.ro);
-  $("#fab").style.display=(tab==="jogos"||tab==="despesas"||tab==="multas")?"block":"none";
-  const titles={jogos:"Jogos",despesas:"Despesas",multas:"Multas & Fundo",resumo:"Resumo",config:"Definições"};
-  $("#hTitle").textContent=titles[tab];
-  ({jogos:renderJogos,despesas:renderDespesas,multas:renderMultas,resumo:renderResumo,config:renderConfig})[tab]();
-  if(keepScrollY!=null){const y=keepScrollY;keepScrollY=null;requestAnimationFrame(()=>window.scrollTo(0,y));}
-}
-
-/* ============ Chips (filtros) ============ */
-const chipScroll={};
-let keepScrollY=null;
-function chips(items,sel,onpick,role){
-  const h='<div class="chips">'+items.map(it=>`<button class="chip ${sel===it.v?"on":""}" data-role="${role}" data-m="${it.v}">${it.l}</button>`).join("")+'</div>';
-  setTimeout(()=>{
-    const cs=$$(`.chip[data-role="${role}"]`);
-    if(cs.length&&chipScroll[role]!=null)cs[0].parentElement.scrollLeft=chipScroll[role];
-    cs.forEach(c=>c.onclick=()=>{
-      chipScroll[role]=c.parentElement.scrollLeft;
-      keepScrollY=window.scrollY;
-      onpick(c.dataset.m);
-    });
-  },0);
-  return h;
-}
-function chipsMeses(sel,onpick){
-  const ms=mesesDaEpoca();
-  return chips([{v:"all",l:"Época"},...ms.map(m=>{const[y,mm]=m.split("-");return{v:m,l:NOME_MES[+mm-1].slice(0,3)+" "+y.slice(2)};})],sel,onpick,"mes");
-}
-function chipsMembros(sel,onpick){
-  return chips([{v:"all",l:"Todos"},...S.membros.map(m=>({v:m.id,l:esc(m.nome)}))],sel,onpick,"mem");
-}
-
-/* ============ Jogos ============ */
-function renderJogos(){
-  const ms=mesSel;
-  const jogos=S.jogos.filter(daEpoca)
-    .filter(j=>ms==="all"||j.data.startsWith(ms))
-    .filter(j=>membroSel==="all"||(j.atribuicoes||[]).some(a=>a.membroId===membroSel))
-    .sort((a,b)=>(b.data+(b.hora||"")).localeCompare(a.data+(a.hora||"")));
-  const somaJ=j=>(j.atribuicoes||[]).filter(a=>membroSel==="all"||a.membroId===membroSel).reduce((s,a)=>s+atrFinal(j,a),0);
-  const tot=jogos.filter(j=>j.estado!=="cancelado").reduce((s,j)=>s+somaJ(j),0);
-  let h=chipsMeses(ms,m=>{mesSel=m;render();});
-  h+=chipsMembros(membroSel,m=>{membroSel=m;render();});
-  // jogos passados ainda "agendado" → pedir confirmação
-  const ag=new Date();
-  const nowStr=ag.getFullYear()+"-"+String(ag.getMonth()+1).padStart(2,"0")+"-"+String(ag.getDate()).padStart(2,"0")+"T"+String(ag.getHours()).padStart(2,"0")+":"+String(ag.getMinutes()).padStart(2,"0");
-  const porConf=(typeof SY!=="undefined"&&SY.ro)?[]:S.jogos.filter(daEpoca).filter(j=>j.estado==="agendado"&&(j.data+"T"+(j.hora||"23:59"))<nowStr);
-  if(porConf.length){
-    h+=`<div class="card" style="border-left:3px solid var(--warn)"><b class="sub">⚠️ ${porConf.length===1?"1 jogo já passou":porConf.length+" jogos já passaram"} — foi(ram) apitado(s)?</b>`;
-    for(const j of porConf.slice(0,6)){
-      h+=`<div class="list-item"><div class="sub">${esc(j.equipaA)} vs ${esc(j.equipaB)}<div class="mut">${diaSem(j.data)} ${fmtD(j.data)} ${esc(j.hora||"")}</div></div>
-      <span style="white-space:nowrap"><button class="btn sm pri" data-conf="${j.id}">✓ Realizado</button> <button class="btn sm dngr" data-canc="${j.id}">✕</button></span></div>`;
-    }
-    h+=`</div>`;
-  }
-  h+=`<div class="card row"><span class="mut">${jogos.length} jogo(s)</span><span><button class="btn sm" id="btnConv">📋 Convocatória</button> <span class="big val">${fmt(tot)}</span></span></div>`;
-  if(!jogos.length)h+=`<div class="empty"><span class="eico">⚽</span>Sem jogos neste período.<br>Toca em <b>+</b> para registar ou usa 📋 para colar uma convocatória.</div>`;
-  for(const j of jogos){
-    const atrs=(j.atribuicoes||[]).map(a=>{
-      const m=S.membros.find(x=>x.id===a.membroId);
-      const c=atrCalc(j,a);
-      const ov=(a.override!==null&&a.override!==undefined&&a.override!=="");
-      const hl=membroSel!=="all"&&a.membroId===membroSel;
-      return `<div class="row sub" style="margin-top:4px"><span>${hl?"▸ ":""}${esc(m?m.nome:"?")} <span class="tag">${esc(a.funcao)}</span>${!c.found&&!ov?' <span class="warn">⚠ sem tarifa</span>':""}</span><span class="val">${fmt(atrFinal(j,a))}${ov?' <span class="tag">manual</span>':""}</span></div>`;
-    }).join("");
-    let pag="";
-    if(j.estado==="pago"&&temRecebido(j)){
-      const dif=(parseFloat(j.valorRecebido)||0)-jogoTotal(j);
-      pag=`<div class="mut sub" style="margin-top:4px">Recebido ${fmt(parseFloat(j.valorRecebido)||0)}${j.dataPagamento?" em "+fmtD(j.dataPagamento):""}${Math.abs(dif)>=0.005?` <b class="${dif<0?"neg":"val"}">(${dif>0?"+":""}${fmt(dif).replace("-","−")})</b>`:""}</div>`;
-    }
-    h+=`<div class="card" data-id="${j.id}">
-      <div class="jhead"><div class="datebox"><span class="dd">${j.data.slice(8,10)}</span><span class="mm">${NOME_MES[+j.data.slice(5,7)-1].slice(0,3)}</span></div>
-      <div class="jmain"><div class="teams">${esc(j.equipaA)} <span class="vs">vs</span> ${esc(j.equipaB)}</div>
-      <div class="mut">${diaSem(j.data)} · ${esc(j.hora||"")} · ${esc(j.escalao)} · ${esc(j.tipo)}${j.local?" · "+esc(j.local):""}</div></div>
-      <span class="badge b-${j.estado}">${j.estado}</span></div>
-      ${atrs}${pag}
-      <div class="row" style="margin-top:8px"><div>
-        <button class="btn sm" data-act="edit">Editar</button>
-        <button class="btn sm" data-act="dup">Duplicar</button>
-        <button class="btn sm dngr" data-act="del">Apagar</button>
-      </div><span class="val">${fmt(jogoTotal(j))}</span></div>
-    </div>`;
-  }
-  $("#main").innerHTML=h;
-  $("#btnConv").onclick=formConv;
-  $$("[data-conf]").forEach(b=>b.onclick=()=>{const j=S.jogos.find(x=>x.id===b.dataset.conf);j.estado="realizado";j.up=Date.now();save();render();toast("Jogo confirmado ✅");});
-  $$("[data-canc]").forEach(b=>b.onclick=()=>{if(confirm("O jogo não se realizou? Fica marcado como cancelado (não conta nos totais).")){const j=S.jogos.find(x=>x.id===b.dataset.canc);j.estado="cancelado";j.up=Date.now();save();render();toast("Jogo cancelado");}});
-  $$('[data-act]').forEach(b=>b.onclick=()=>{
-    const id=b.closest(".card").dataset.id, j=S.jogos.find(x=>x.id===id);
-    if(b.dataset.act==="edit")formJogo(j);
-    else if(b.dataset.act==="dup"){const c=JSON.parse(JSON.stringify(j));c.id=uid();c.estado="agendado";c.valorRecebido="";c.dataPagamento="";formJogo(c,true);}
-    else if(confirm("Apagar este jogo?")){S.jogos=S.jogos.filter(x=>x.id!==id);tomb("jogos",id);save();render();toast("Jogo apagado");}
-  });
-}
-
-function papelAtr(atrs,i){
-  const f=atrs[i].funcao;
-  if(f==="A")return "A";
-  if(f==="1 arb")return "A1";
-  if(f==="2 arb")return "A2";
-  let n=0;for(let k=0;k<=i;k++)if(atrs[k].funcao==="AA")n++;
-  return "AA"+n;
-}
-function formJogo(j,isNovoRegisto=false){
-  const novo=!j;
-  j=j?JSON.parse(JSON.stringify(j)):{id:uid(),epocaId:epAtiva().id,data:new Date().toISOString().slice(0,10),hora:"15:00",escalao:"",equipaA:"",equipaB:"",local:"",tipo:"Distrital",estado:"agendado",valorRecebido:"",dataPagamento:"",atribuicoes:[{membroId:S.membros[0]?.id,funcao:"A",almocoId:"",km:"",override:""}]};
-  const existe=S.jogos.some(x=>x.id===j.id);
-  const tipos=[...new Set(S.tabela.filter(daEpoca).map(r=>r.tipo))];
-  const escaloes=[...new Set(S.tabela.filter(daEpoca).map(r=>r.escalao))];
-  const equipas=[...new Set(S.jogos.filter(daEpoca).flatMap(x=>[x.equipaA,x.equipaB]).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
-  const dlg=$("#dlg");
-  dlg.innerHTML=`<h2>${(novo||!existe)?"Novo jogo":"Editar jogo"}</h2>
-  <div class="grid2"><div><label>Data</label><input type="date" id="fData" value="${j.data}"></div>
-  <div><label>Hora</label><input type="time" id="fHora" value="${j.hora||""}"></div></div>
-  <div class="grid2"><div><label>Tipo de jogo</label><select id="fTipo">${tipos.map(t=>`<option ${t===j.tipo?"selected":""}>${esc(t)}</option>`).join("")}</select></div>
-  <div><label>Escalão</label><input id="fEsc" list="dlEsc" value="${esc(j.escalao)}" placeholder="ex: sub 14 IN"><datalist id="dlEsc">${escaloes.map(e=>`<option value="${esc(e)}">`).join("")}</datalist></div></div>
-  <div class="grid2"><div><label>Equipa A</label><input id="fEqA" list="dlEq" value="${esc(j.equipaA)}"></div>
-  <div><label>Equipa B</label><input id="fEqB" list="dlEq" value="${esc(j.equipaB)}"></div></div>
-  <datalist id="dlEq">${equipas.map(e=>`<option value="${esc(e)}">`).join("")}</datalist>
-  <label>Local / campo (opcional)</label><input id="fLoc" value="${esc(j.local||"")}">
-  <label>Estado</label><select id="fEst">${ESTADOS.map(e=>`<option ${e===j.estado?"selected":""}>${e}</option>`).join("")}</select>
-  <div id="pagSec" style="display:none">
-    <div class="grid2"><div><label>Valor recebido (€)</label><input type="number" inputmode="decimal" step="0.01" id="fVR" value="${j.valorRecebido??""}" placeholder="valor pago pela associação"></div>
-    <div><label>Data de pagamento</label><input type="date" id="fDP" value="${j.dataPagamento||""}"></div></div>
-    <div class="mut sub" id="fDif" style="margin-top:4px"></div>
-  </div>
-  <h3 class="sec">Atribuições</h3><div id="atrs"></div>
-  <button class="btn sm" id="addAtr" style="margin-top:8px">+ Adicionar membro</button>
-  <div class="row" style="margin-top:12px"><b>Total do jogo</b><span class="big val" id="fTot"></span></div>
-  <div class="btnrow"><button class="btn" id="fCancel">Cancelar</button><button class="btn pri" id="fSave">Guardar</button></div>`;
-
-  function totalAtual(){return j.atribuicoes.filter(a=>a.membroId).reduce((s,a)=>s+atrFinal({...j,tipo:$("#fTipo").value,escalao:$("#fEsc").value},a),0);}
-  function updPag(){
-    $("#pagSec",dlg).style.display=$("#fEst",dlg).value==="pago"?"block":"none";
-    const vr=parseFloat($("#fVR",dlg).value);
-    if(!isNaN(vr)){
-      const dif=vr-totalAtual();
-      $("#fDif",dlg).innerHTML=Math.abs(dif)<0.005?"✓ coincide com o valor calculado":`Diferença face ao calculado: <b class="${dif<0?"neg":"val"}">${dif>0?"+":""}${fmt(dif)}</b>`;
-    } else $("#fDif",dlg).textContent="";
-  }
-  function drawAtrs(){
-    $("#atrs",dlg).innerHTML=j.atribuicoes.map((a,i)=>{
-      const c=atrCalc({...j,tipo:$("#fTipo").value,escalao:$("#fEsc").value},a);
-      return `<div class="atr" data-i="${i}">
-      <div class="head"><b class="sub">${papelAtr(j.atribuicoes,i)} · ${esc(a.funcao)}${a.nomeSms?` <span class="tag">na msg: ${esc(a.nomeSms)}</span>`:""}</b><button class="iconbtn" data-rm="${i}">✕</button></div>
-      <div class="grid2"><div><label>Quem</label><select data-f="membroId"><option value="" ${!a.membroId?"selected":""}>(fora da equipa)</option>${S.membros.map(m=>`<option value="${m.id}" ${m.id===a.membroId?"selected":""}>${esc(m.nome)}</option>`).join("")}</select></div>
-      <div><label>Função</label><select data-f="funcao">${FUNCOES.map(f=>`<option ${f===a.funcao?"selected":""}>${f}</option>`).join("")}</select></div></div>
-      <div class="grid2"><div><label>Almoço</label><select data-f="almocoId"><option value="">Sem almoço</option>${S.almocos.filter(daEpoca).map(x=>`<option value="${x.id}" ${x.id===a.almocoId?"selected":""}>${esc(x.nome)} (${fmt(x.valor)})</option>`).join("")}</select></div>
-      <div>${(()=>{const dr=deslocRule($("#fTipo").value);
-        if(dr&&dr.modo==="fixo")return `<label>Deslocação (${fmt(dr.valor)}/jogo)</label><select data-f="deslocFixa"><option value="" ${!a.deslocFixa?"selected":""}>Não</option><option value="1" ${a.deslocFixa?"selected":""}>Sim</option></select>`;
-        return `<label>Km${dr?` (${fmt(dr.valor)}/km)`:""}</label><input type="number" inputmode="decimal" step="1" min="0" data-f="km" value="${a.km??""}" placeholder="0">`;})()}</div></div>
-      <label>Valor manual (opcional)</label><input type="number" inputmode="decimal" step="0.01" data-f="override" value="${a.override??""}" placeholder="deixa vazio p/ automático">
-      <div class="calc"><span class="mut">Tarifa ${fmt(c.base)} + almoço ${fmt(c.alm)} + desloc. ${fmt(c.km)}</span><b class="val">${fmt(atrFinal({...j,tipo:$("#fTipo").value,escalao:$("#fEsc").value},a))}</b></div>
-      ${!c.found?'<div class="warn">⚠ Combinação não existe na tabela de valores — valor base 0. Usa valor manual ou adiciona a tarifa em Definições.</div>':""}
-      </div>`;
-    }).join("");
-    $("#fTot",dlg).textContent=fmt(totalAtual());
-    updPag();
-    $$("[data-rm]",dlg).forEach(b=>b.onclick=()=>{j.atribuicoes.splice(+b.dataset.rm,1);drawAtrs();});
-    $$(".atr [data-f]",dlg).forEach(el=>el.oninput=()=>{
-      const i=+el.closest(".atr").dataset.i;
-      j.atribuicoes[i][el.dataset.f]=el.value;
-      drawAtrs();
-    });
-  }
-  ["fTipo","fEsc"].forEach(id=>setTimeout(()=>$("#"+id,dlg).addEventListener("input",drawAtrs),0));
-  setTimeout(()=>{$("#fEst",dlg).addEventListener("change",updPag);$("#fVR",dlg).addEventListener("input",updPag);},0);
-  $("#addAtr",dlg).onclick=()=>{j.atribuicoes.push({membroId:S.membros[0]?.id,funcao:"AA",almocoId:"",km:"",override:""});drawAtrs();};
-  $("#fCancel",dlg).onclick=()=>dlg.close();
-  $("#fSave",dlg).onclick=()=>{
-    j.data=$("#fData").value; j.hora=$("#fHora").value; j.tipo=$("#fTipo").value;
-    j.escalao=$("#fEsc").value.trim(); j.equipaA=$("#fEqA").value.trim(); j.equipaB=$("#fEqB").value.trim();
-    j.local=$("#fLoc").value.trim(); j.estado=$("#fEst").value;
-    j.valorRecebido=$("#fVR").value; j.dataPagamento=$("#fDP").value;
-    j.epocaId=j.epocaId||epAtiva().id;
-    if(!j.data){toast("Falta a data");return;}
-    j.atribuicoes=j.atribuicoes.filter(a=>a.membroId);
-    if(!j.atribuicoes.length){toast("Adiciona pelo menos um membro (linhas 'fora da equipa' são ignoradas)");return;}
-    j.up=Date.now();
-    for(const a of j.atribuicoes)if(a.nomeSms&&a.membroId){
-      const mb=S.membros.find(x=>x.id===a.membroId);
-      if(mb&&norm(mb.alias||"")!==norm(a.nomeSms)){mb.alias=a.nomeSms;mb.up=Date.now();}
-    }
-    const ix=S.jogos.findIndex(x=>x.id===j.id);
-    if(ix>=0)S.jogos[ix]=j; else S.jogos.push(j);
-    save();dlg.close();render();toast("Jogo guardado");
-  };
-  drawAtrs(); dlg.showModal();
-}
-
-/* ============ Convocatória (colar mensagem) ============ */
-const PAPEL_FUNCAO={"A":"A","A1":"1 arb","A2":"2 arb","AA1":"AA","AA2":"AA","4A":"AA"};
-function parseConv(txt){
-  txt=String(txt||"").replace(/\s+/g," ").trim();
-  const parts=txt.split("#");
-  const out={nomeacoes:[]};
-  if(parts.length<3)return null;
-  const comp=parts[1]||"";
-  out.tipo=/\b(CN|nacional)\b/i.test(comp)?"Nacional":"Distrital";
-  const escaloes=[...new Set(S.tabela.filter(daEpoca).map(r=>r.escalao))];
-  const sub=comp.match(/sub\s*\/?\s*(\d+)/i);
-  if(sub){
-    const alvo="sub "+sub[1];
-    out.escalao=escaloes.find(e=>norm(e).replace(/\s+/g," ").includes(norm(alvo)))||alvo;
-  }else if(/1\S?\s*div/i.test(comp))out.escalao=escaloes.find(e=>/1/.test(e)&&/div/i.test(e))||"1ª divisão";
-  else if(/2\S?\s*div/i.test(comp))out.escalao=escaloes.find(e=>/2/.test(e)&&/div/i.test(e))||"2ª divisão";
-  else out.escalao=comp.trim();
-  const eq=(parts[2]||"").split("*");
-  out.equipaA=(eq[0]||"").trim(); out.equipaB=(eq[1]||"").trim();
-  const resto=parts.slice(3).join("#");
-  const dm=resto.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-  if(dm)out.data=`${dm[3]}-${dm[2]}-${dm[1]}`;
-  const hm=resto.match(/(\d{1,2}):(\d{2})/);
-  if(hm)out.hora=`${hm[1].padStart(2,"0")}:${hm[2]}`;
-  const antes=resto.split(/\d{2}\/\d{2}\/\d{4}/)[0]||"";
-  out.local=antes.replace(/[<>]/g," ").replace(/\s+/g," ").trim();
-  const numJogo=(parts[0]||"").match(/\d{6,}/);
-  if(numJogo)out.numJogo=numJogo[0];
-  const re=/\b(4A|AA1|AA2|A1|A2|A)\s*-\s*([A-Za-zÀ-ÿ.'\s]+?)\s*(?:\d{9})?(?=\s*\b(?:4A|AA1|AA2|A1|A2|A)\s*-|\s*$)/g;
-  let m;
-  while((m=re.exec(resto))!==null)out.nomeacoes.push({papel:m[1],nome:m[2].trim()});
-  return out;
-}
-function matchMembro(nomeSms){
-  const flat=s=>norm(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z]/g,"");
-  const alvo=flat(nomeSms);
-  if(!alvo)return null;
-  let m=S.membros.find(mb=>mb.alias&&flat(mb.alias)===alvo);
-  if(m)return m;
-  const toks=norm(nomeSms).normalize("NFD").replace(/[\u0300-\u036f]/g,"").split(/[\s.]+/).filter(Boolean);
-  const ntoksDe=mb=>norm(mb.nome).normalize("NFD").replace(/[\u0300-\u036f]/g,"").split(/\s+/);
-  if(toks.length>=2&&toks[0].length===1){
-    m=S.membros.find(mb=>{
-      const ntoks=ntoksDe(mb);
-      return ntoks.length&&ntoks[0].startsWith(toks[0])&&toks.slice(1).every(t=>ntoks.some(nt=>nt.includes(t)));
-    });
-    if(m)return m;
-    // inicial única: se só um membro começa por essa letra, é ele (ex: "A Gomes" → Ânia)
-    const cands=S.membros.filter(mb=>{const n=ntoksDe(mb);return n.length&&n[0].startsWith(toks[0]);});
-    if(cands.length===1)return cands[0];
-  }
-  return S.membros.find(mb=>{
-    const ntoks=norm(mb.nome).normalize("NFD").replace(/[\u0300-\u036f]/g,"").split(/\s+/);
-    return toks.filter(t=>t.length>2).some(t=>ntoks.some(nt=>nt.includes(t)||t.includes(nt)));
-  })||null;
-}
-function formConv(){
-  const dlg=$("#dlg");
-  dlg.innerHTML=`<h2>Colar convocatória</h2>
-  <div class="mut sub">Cola a mensagem da nomeação — a app extrai data, hora, escalão, equipas, campo e funções. Depois só confirmas quem é quem.</div>
-  <label>Principal deste jogo (quem recebeu a mensagem)</label><select id="cvEu">${S.membros.map(m=>`<option value="${m.id}" ${m.id===S.settings.membroEuId?"selected":""}>${esc(m.nome)}</option>`).join("")}</select>
-  <label>Mensagem</label><textarea id="cvTxt" rows="5" placeholder="1128030020 INI#CD 1 Div Sub/15#UD Fermedo*UD Mourisquense#CAMPO..."></textarea>
-  <div class="btnrow"><button class="btn" id="cvCancel">Cancelar</button><button class="btn pri" id="cvGo">Analisar</button></div>`;
-  $("#cvCancel").onclick=()=>dlg.close();
-  $("#cvGo").onclick=()=>{
-    const p=parseConv($("#cvTxt").value);
-    if(!p||!p.equipaA){toast("Não consegui interpretar a mensagem");return;}
-    const euJogo=$("#cvEu").value;
-    const atr=p.nomeacoes.map(n=>{
-      const mb=n.nome?matchMembro(n.nome):null;
-      return {membroId:mb?mb.id:"",funcao:PAPEL_FUNCAO[n.papel]||"AA",almocoId:"",km:"",override:"",nomeSms:n.nome};
-    });
-    if(!p.nomeacoes.some(n=>n.papel==="A"||n.papel==="A1")){
-      const fdisp=[...new Set(S.tabela.filter(daEpoca).filter(r=>norm(r.tipo)===norm(p.tipo||"")&&norm(r.escalao)===norm(p.escalao||"")).map(r=>r.funcao))];
-      const fP=fdisp.includes("A")?"A":(fdisp.includes("1 arb")?"1 arb":"A");
-      atr.unshift({membroId:euJogo||S.membros[0]?.id,funcao:fP,almocoId:"",km:"",override:""});
-    }
-    const j={id:uid(),epocaId:epAtiva().id,data:p.data||new Date().toISOString().slice(0,10),hora:p.hora||"15:00",
-      escalao:p.escalao||"",equipaA:p.equipaA,equipaB:p.equipaB,local:p.local||"",tipo:p.tipo||"Distrital",
-      estado:"agendado",valorRecebido:"",dataPagamento:"",numJogo:p.numJogo||"",atribuicoes:atr};
-    dlg.close();
-    formJogo(j,true);
-    if(p.nomeacoes.length)toast(`Detetadas ${p.nomeacoes.length} nomeação(ões): ${p.nomeacoes.map(n=>n.papel+" "+n.nome).join(" · ")} — confirma quem é quem`);
-  };
-  dlg.showModal();
-}
-
-/* ============ Despesas ============ */
-let mesDesp="all";
-function renderDespesas(){
-  const ds=S.despesas.filter(daEpoca)
-    .filter(d=>mesDesp==="all"||d.data.startsWith(mesDesp))
-    .filter(d=>membroSel==="all"||d.membroId===membroSel)
-    .sort((a,b)=>b.data.localeCompare(a.data));
-  const tot=ds.reduce((s,d)=>s+(d.tipoLanc==="receita"?1:-1)*(parseFloat(d.valor)||0),0);
-  let h=chipsMeses(mesDesp,m=>{mesDesp=m;render();});
-  h+=chipsMembros(membroSel,m=>{membroSel=m;render();});
-  h+=`<div class="card row"><span class="mut">${ds.length} lançamento(s)</span><span class="big ${tot<0?"neg":"val"}">${fmt(tot)}</span></div>`;
-  if(!ds.length)h+=`<div class="empty"><span class="eico">🧾</span>Sem despesas neste período.</div>`;
-  for(const d of ds){
-    const m=S.membros.find(x=>x.id===d.membroId);
-    const v=(d.tipoLanc==="receita"?1:-1)*(parseFloat(d.valor)||0);
-    h+=`<div class="card row" data-id="${d.id}"><div><b>${esc(d.categoria)}</b> <span class="tag">${esc(m?m.nome:"—")}</span><div class="mut">${fmtD(d.data)}${d.descricao?" · "+esc(d.descricao):""}</div></div>
-    <div style="text-align:right"><div class="${v<0?"neg":"val"}" style="font-weight:700">${fmt(v)}</div>
-    <button class="btn sm" data-act="edit">Editar</button> <button class="btn sm dngr" data-act="del">✕</button></div></div>`;
-  }
-  $("#main").innerHTML=h;
-  $$('[data-act]').forEach(b=>b.onclick=()=>{
-    const id=b.closest(".card").dataset.id, d=S.despesas.find(x=>x.id===id);
-    if(b.dataset.act==="edit")formDespesa(d);
-    else if(confirm("Apagar lançamento?")){S.despesas=S.despesas.filter(x=>x.id!==id);tomb("despesas",id);save();render();}
-  });
-}
-function formDespesa(d){
-  const novo=!d;
-  d=d?{...d}:{id:uid(),epocaId:epAtiva().id,membroId:(membroSel!=="all"?membroSel:S.membros[0]?.id),data:new Date().toISOString().slice(0,10),categoria:"",descricao:"",valor:"",tipoLanc:"despesa"};
-  const dlg=$("#dlg");
-  dlg.innerHTML=`<h2>${novo?"Nova despesa / receita":"Editar lançamento"}</h2>
-  <div class="grid2"><div><label>Quem</label><select id="dM">${S.membros.map(m=>`<option value="${m.id}" ${m.id===d.membroId?"selected":""}>${esc(m.nome)}</option>`).join("")}</select></div>
-  <div><label>Data</label><input type="date" id="dD" value="${d.data}"></div></div>
-  <div class="grid2"><div><label>Categoria</label><input id="dC" list="dlCat" value="${esc(d.categoria)}"><datalist id="dlCat">${S.categorias.map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
-  <div><label>Tipo</label><select id="dT"><option value="despesa" ${d.tipoLanc==="despesa"?"selected":""}>Despesa (−)</option><option value="receita" ${d.tipoLanc==="receita"?"selected":""}>Receita (+)</option></select></div></div>
-  <label>Descrição</label><input id="dDesc" value="${esc(d.descricao)}">
-  <label>Valor (€)</label><input type="number" inputmode="decimal" step="0.01" min="0" id="dV" value="${d.valor}">
-  <div class="btnrow"><button class="btn" id="dCancel">Cancelar</button><button class="btn pri" id="dSave">Guardar</button></div>`;
-  $("#dCancel").onclick=()=>dlg.close();
-  $("#dSave").onclick=()=>{
-    d.membroId=$("#dM").value;d.data=$("#dD").value;d.categoria=$("#dC").value.trim()||"Outro";
-    d.tipoLanc=$("#dT").value;d.descricao=$("#dDesc").value.trim();d.valor=parseFloat($("#dV").value)||0;
-    if(!d.data||!d.valor){toast("Preenche data e valor");return;}
-    if(!S.categorias.includes(d.categoria))S.categorias.push(d.categoria);
-    d.epocaId=d.epocaId||epAtiva().id;
-    d.up=Date.now();
-    const ix=S.despesas.findIndex(x=>x.id===d.id);
-    if(ix>=0)S.despesas[ix]=d;else S.despesas.push(d);
-    save();dlg.close();render();toast("Guardado");
-  };
-  dlg.showModal();
-}
-
-/* ============ Multas / Fundo da equipa ============ */
-let mesMul="all";
-function multaVencida(m){
-  if(m.pago)return false;
-  return (Date.now()-new Date(m.data+"T00:00").getTime())>7*86400000;
-}
-function renderMultas(){
-  const ms=S.multas.filter(daEpoca)
-    .filter(m=>mesMul==="all"||m.data.startsWith(mesMul))
-    .filter(m=>membroSel==="all"||m.membroId===membroSel)
-    .sort((a,b)=>b.data.localeCompare(a.data));
-  const fundo=S.multas.filter(daEpoca).filter(m=>m.pago).reduce((s,m)=>s+(parseFloat(m.valor)||0),0);
-  const porCobrar=S.multas.filter(daEpoca).filter(m=>!m.pago).reduce((s,m)=>s+(parseFloat(m.valor)||0),0);
-  let h=chipsMeses(mesMul,m=>{mesMul=m;render();});
-  h+=chipsMembros(membroSel,m=>{membroSel=m;render();});
-  h+=`<div class="total-strip">
-    <div class="card stat"><span class="sico">🍻</span><div><div class="mut">Fundo da equipa (pago)</div><div class="big val">${fmt(fundo)}</div></div></div>
-    <div class="card stat"><span class="sico">🟨</span><div><div class="mut">Por cobrar</div><div class="big" style="color:var(--warn)">${fmt(porCobrar)}</div></div></div></div>`;
-  h+=`<div class="mut" style="margin-bottom:10px">O fundo reverte para convívios e atividades da equipa (Cap. VII do regulamento). Prazo de pagamento: 7 dias.</div>`;
-  if(!ms.length)h+=`<div class="empty"><span class="eico">🟨</span>Sem multas neste período. 🎉<br>Toca em <b>+</b> para registar uma.</div>`;
-  for(const m of ms){
-    const mb=S.membros.find(x=>x.id===m.membroId);
-    const art=S.artigos.find(a=>a.id===m.artigoId);
-    const venc=multaVencida(m);
-    h+=`<div class="card" data-id="${m.id}"><div class="row"><div><b>${esc(mb?mb.nome:"—")}</b> <span class="tag">${esc(art?("Art. "+art.num):"Outra")}</span>
-      <div class="mut">${fmtD(m.data)} · ${esc(art?art.nome:(m.descricao||""))}${art&&m.descricao?" · "+esc(m.descricao):""}</div></div>
-      <span class="badge ${m.pago?"b-pago":(venc?"b-cancelado":"b-realizado")}" ${venc?'style="background:rgba(248,113,113,.15);color:var(--err)"':""}>${m.pago?"✅ paga":(venc?"🟥 em atraso":"🟨 pendente")}</span></div>
-      <div class="row" style="margin-top:8px"><div>
-        ${m.pago?"":`<button class="btn sm pri" data-act="paga">✓ Paga</button> `}<button class="btn sm" data-act="edit">Editar</button>
-        <button class="btn sm dngr" data-act="del">✕</button>
-      </div><span class="val">${fmt(m.valor)}</span></div></div>`;
-  }
-  $("#main").innerHTML=h;
-  $$('[data-act]').forEach(b=>b.onclick=()=>{
-    const id=b.closest(".card").dataset.id, m=S.multas.find(x=>x.id===id);
-    if(b.dataset.act==="edit")formMulta(m);
-    else if(b.dataset.act==="paga"){m.pago=true;m.dataPagamento=new Date().toISOString().slice(0,10);m.up=Date.now();save();render();toast("Multa marcada como paga");}
-    else if(confirm("Apagar multa?")){S.multas=S.multas.filter(x=>x.id!==id);tomb("multas",id);save();render();}
-  });
-}
-function formMulta(m){
-  const novo=!m;
-  m=m?{...m}:{id:uid(),epocaId:epAtiva().id,membroId:(membroSel!=="all"?membroSel:S.membros[0]?.id),data:new Date().toISOString().slice(0,10),artigoId:"",descricao:"",valor:"",pago:false};
-  const dlg=$("#dlg");
-  dlg.innerHTML=`<h2>${novo?"Nova multa":"Editar multa"}</h2>
-  <div class="grid2"><div><label>Quem</label><select id="uM">${S.membros.map(x=>`<option value="${x.id}" ${x.id===m.membroId?"selected":""}>${esc(x.nome)}</option>`).join("")}</select></div>
-  <div><label>Data</label><input type="date" id="uD" value="${m.data}"></div></div>
-  <label>Infração (regulamento)</label><select id="uA"><option value="">Outra / manual</option>${S.artigos.map(a=>`<option value="${a.id}" ${a.id===m.artigoId?"selected":""}>Art. ${a.num} — ${esc(a.nome)} (${fmt(a.valor)}${a.porUnidade?"/un":""})</option>`).join("")}</select>
-  <div class="warn" id="uRei" style="display:none"></div>
-  <div class="grid2"><div><label>Quantidade (min/cliques)</label><input type="number" min="1" step="1" id="uQ" value="1"></div>
-  <div><label>Valor (€)</label><input type="number" inputmode="decimal" step="0.01" id="uV" value="${m.valor}"></div></div>
-  <label>Nota (opcional)</label><input id="uDesc" value="${esc(m.descricao||"")}">
-  <label>Estado</label><select id="uP"><option value="" ${!m.pago?"selected":""}>Pendente</option><option value="1" ${m.pago?"selected":""}>Paga</option></select>
-  <div class="btnrow"><button class="btn" id="uCancel">Cancelar</button><button class="btn pri" id="uSave">Guardar</button></div>`;
-  function upd(){
-    const art=S.artigos.find(a=>a.id===$("#uA").value);
-    const q=Math.max(1,parseInt($("#uQ").value)||1);
-    $("#uQ").parentElement.style.display=art&&art.porUnidade?"block":"none";
-    if(art){
-      let v=art.porUnidade?art.valor*q:art.valor;
-      const rein=S.multas.filter(daEpoca).filter(x=>x.id!==m.id&&x.membroId===$("#uM").value&&x.artigoId===art.id).length;
-      if(rein>=2){v*=2;$("#uRei").style.display="block";$("#uRei").textContent=`⚠ ${rein+1}ª ocorrência do mesmo artigo nesta época — multa duplicada (Art. 19).`;}
-      else $("#uRei").style.display="none";
-      $("#uV").value=v;
-    } else $("#uRei").style.display="none";
-  }
-  $("#uA").onchange=upd;$("#uQ").oninput=upd;$("#uM").onchange=upd;
-  if(novo)upd(); else {const art=S.artigos.find(a=>a.id===m.artigoId);$("#uQ").parentElement.style.display=art&&art.porUnidade?"block":"none";}
-  $("#uCancel").onclick=()=>dlg.close();
-  $("#uSave").onclick=()=>{
-    m.membroId=$("#uM").value;m.data=$("#uD").value;m.artigoId=$("#uA").value;
-    m.descricao=$("#uDesc").value.trim();m.valor=parseFloat($("#uV").value)||0;
-    if(!m.data||!m.valor){toast("Preenche data e valor");return;}
-    const pago=!!$("#uP").value;
-    if(pago&&!m.pago)m.dataPagamento=new Date().toISOString().slice(0,10);
-    m.pago=pago;
-    m.epocaId=m.epocaId||epAtiva().id;
-    m.up=Date.now();
-    const ix=S.multas.findIndex(x=>x.id===m.id);
-    if(ix>=0)S.multas[ix]=m;else S.multas.push(m);
-    save();dlg.close();render();toast("Multa guardada");
-  };
-  dlg.showModal();
-}
-
-/* ============ Resumo ============ */
-let mesRes="all";
-function totaisMembro(mid,pref){
-  const jog=S.jogos.filter(daEpoca).filter(j=>j.estado!=="cancelado"&&(pref==="all"||j.data.startsWith(pref)));
-  let g=0,n=0;
-  for(const j of jog)for(const a of j.atribuicoes||[])if(a.membroId===mid){g+=atrFinal(j,a);n++;}
-  const desp=S.despesas.filter(daEpoca).filter(d=>d.membroId===mid&&(pref==="all"||d.data.startsWith(pref)))
-    .reduce((s,d)=>s+(d.tipoLanc==="receita"?1:-1)*(parseFloat(d.valor)||0),0);
-  return {ganhos:g,njogos:n,despesas:desp,liquido:g+desp};
-}
-function renderResumo(){
-  let h=chipsMeses(mesRes,m=>{mesRes=m;render();});
-  h+=chipsMembros(membroSel,m=>{membroSel=m;render();});
-  const membros=membroSel==="all"?S.membros:S.membros.filter(m=>m.id===membroSel);
-  const tots=membros.map(m=>({m,...totaisMembro(m.id,mesRes)}));
-  const totG=tots.reduce((s,t)=>s+t.ganhos,0), totL=tots.reduce((s,t)=>s+t.liquido,0);
-  const jsel=S.jogos.filter(daEpoca)
-    .filter(j=>mesRes==="all"||j.data.startsWith(mesRes))
-    .filter(j=>membroSel==="all"||(j.atribuicoes||[]).some(a=>a.membroId===membroSel));
-  const somaSel=j=>(j.atribuicoes||[]).filter(a=>membroSel==="all"||a.membroId===membroSel).reduce((s,a)=>s+atrFinal(j,a),0);
-  let recebido;
-  if(membroSel==="all"){
-    const mesesPg=S.pagamentos.filter(daEpoca).filter(pp=>mesRes==="all"||pp.mes===mesRes);
-    const mesesComPg=new Set(mesesPg.map(pp=>pp.mes));
-    recebido=mesesPg.reduce((s,pp)=>s+(parseFloat(pp.valor)||0),0)
-      +jsel.filter(j=>j.estado==="pago"&&!mesesComPg.has(j.data.slice(0,7))).reduce((s,j)=>s+(temRecebido(j)?(parseFloat(j.valorRecebido)||0):somaSel(j)),0);
-  }else{
-    recebido=jsel.filter(j=>j.estado==="pago").reduce((s,j)=>s+somaSel(j),0);
-  }
-  const porReceber=jsel.filter(j=>j.estado==="realizado").reduce((s,j)=>s+somaSel(j),0);
-  const porJogar=jsel.filter(j=>j.estado==="agendado").reduce((s,j)=>s+somaSel(j),0);
-  h+=`<div class="total-strip">
-    <div class="card stat"><span class="sico">✅</span><div><div class="mut">Recebido</div><div class="big val">${fmt(recebido)}</div></div></div>
-    <div class="card stat"><span class="sico">⏳</span><div><div class="mut">Por receber — jogos já apitados</div><div class="big" style="color:var(--warn)">${fmt(porReceber)}</div></div></div>
-    <div class="card stat"><span class="sico">📅</span><div><div class="mut">Por jogar — agendados</div><div class="big" style="color:var(--blue)">${fmt(porJogar)}</div></div></div>
-    <div class="card stat"><span class="sico">💶</span><div><div class="mut">Total dos jogos</div><div class="big val">${fmt(totG)}</div></div></div></div>`;
-  h+=`<div class="card row"><span class="mut">Líquido: jogos ${fmt(totG)} ${totL-totG<0?"−":"+"} extras/despesas ${fmt(Math.abs(totL-totG))}</span><b class="big ${totL<0?"neg":"val"}" style="font-size:1.05rem">${fmt(totL)}</b></div>`;
-  h+=`<h3 class="sec">Pagamentos da associação (por mês)</h3><div class="card">`;
-  {
-    const mesesShow=(mesRes==="all"?mesesDaEpoca():[mesRes]);
-    let algum=false;
-    for(const mM of mesesShow){
-      const jsMes=S.jogos.filter(daEpoca).filter(j=>j.data.startsWith(mM)&&j.estado!=="cancelado");
-      const njm=jsMes.length;
-      if(!njm)continue;algum=true;
-      const nAg=jsMes.filter(j=>j.estado==="agendado").length;
-      const calc=calcMes(mM);
-      const pg=pagamentoDe(mM);
-      const[yy,mm2]=mM.split("-");
-      const nomeM=NOME_MES[+mm2-1]+" "+yy;
-      if(pg){
-        const dif=(parseFloat(pg.valor)||0)-calc;
-        h+=`<div class="list-item"><div><b class="sub">${nomeM}</b><div class="mut">${njm} jogo(s) · calculado ${fmt(calc)}${pg.data?" · pago em "+fmtD(pg.data):""}${Math.abs(dif)>=0.005?` · <b class="${dif<0?"neg":"val"}">dif ${dif>0?"+":""}${fmt(dif)}</b>`:""}</div></div>
-        <span><b class="val">✅ ${fmt(pg.valor)}</b> <button class="iconbtn" data-pgdel="${pg.id}">✕</button></span></div>`;
-      }else if(calc>0){
-        h+=`<div class="list-item"><div><b class="sub">${nomeM}</b><div class="mut">${njm} jogo(s)${nAg?` · ${nAg} ainda por jogar`:""}</div></div>
-        <span><b style="color:var(--warn)">⏳ ${fmt(calc)}</b> <button class="btn sm pri" data-pgadd="${mM}">Pago</button></span></div>`;
-      }else{
-        h+=`<div class="list-item"><div><b class="sub">${nomeM}</b><div class="mut">${njm} jogo(s) agendado(s)</div></div>
-        <span class="mut">📅 por jogar — marca-os "realizado" depois de apitares</span></div>`;
-      }
-    }
-    if(!algum)h+=`<div class="mut">Ainda sem jogos nesta época.</div>`;
-    h+=`</div>`;
-  }
-  h+=`<div class="card"><div class="mut" style="margin-bottom:8px">Evolução mensal ${membroSel==="all"?"(grupo)":"("+esc(S.membros.find(m=>m.id===membroSel)?.nome||"")+")"}</div><canvas id="chart" width="600" height="170"></canvas></div>`;
-  h+=`<h3 class="sec">Por pessoa</h3><div class="card">`;
-  for(const t of tots){
-    h+=`<div class="list-item"><div><b>${esc(t.m.nome)}</b><div class="mut">${t.njogos} jogo(s) · despesas ${fmt(t.despesas)}</div></div>
-    <div style="text-align:right"><div class="val" style="font-weight:700">${fmt(t.ganhos)}</div><div class="mut sub">líq. ${fmt(t.liquido)}</div></div></div>`;
-  }
-  h+=`</div>`;
-  const porEsc={};
-  for(const j of jsel.filter(j=>j.estado!=="cancelado"))
-    porEsc[j.escalao+" ("+j.tipo+")"]=(porEsc[j.escalao+" ("+j.tipo+")"]||0)+1;
-  const escKeys=Object.keys(porEsc).sort((a,b)=>porEsc[b]-porEsc[a]);
-  if(escKeys.length){
-    h+=`<h3 class="sec">Jogos por escalão</h3><div class="card">`+escKeys.map(k=>`<div class="list-item"><span class="sub">${esc(k)}</span><b>${porEsc[k]}</b></div>`).join("")+`</div>`;
-  }
-  h+=`<h3 class="sec">Exportar / Sincronizar</h3><div class="card"><div class="btnrow" style="margin:0">
-    <button class="btn" id="expCsv">CSV jogos</button><button class="btn" id="expJson">Backup JSON</button></div>
-    <div class="btnrow"><button class="btn" id="shareJson">Partilhar backup 📤</button></div>
-    <div class="btnrow"><button class="btn pri" id="mrgJson">Fundir backup (juntar dados)</button><button class="btn" id="impJson">Restaurar (substituir)</button></div>
-    <div class="mut" style="margin-top:8px">Para sincronizar entre telemóveis: cada pessoa envia o seu backup (📤, ex: WhatsApp) e os outros usam <b>Fundir</b> — junta jogos/despesas de todos sem apagar nada; em conflitos ganha a edição mais recente.</div>
-    <input type="file" id="impFile" accept=".json,application/json" style="display:none"></div>`;
-  $("#main").innerHTML=h;
-  drawChart();
-  $("#expCsv").onclick=exportCsv;
-  $("#expJson").onclick=exportJson;
-  $("#shareJson").onclick=shareJson;
-  $$("[data-pgadd]").forEach(b=>b.onclick=()=>formPagamento(b.dataset.pgadd));
-  $$("[data-pgdel]").forEach(b=>b.onclick=()=>{
-    const pg=S.pagamentos.find(x=>x.id===b.dataset.pgdel);
-    if(pg&&confirm("Remover o pagamento deste mês? Os jogos voltam a 'realizado'.")){
-      S.pagamentos=S.pagamentos.filter(x=>x.id!==pg.id);tomb("pagamentos",pg.id);
-      for(const j of S.jogos.filter(daEpoca))if(j.data.startsWith(pg.mes)&&j.estado==="pago"){j.estado="realizado";j.up=Date.now();}
-      save();render();
-    }
-  });
-  let impMode="replace";
-  $("#impJson").onclick=()=>{impMode="replace";$("#impFile").click();};
-  $("#mrgJson").onclick=()=>{impMode="merge";$("#impFile").click();};
-  $("#impFile").onchange=e=>importJson(e,impMode);
-}
-function pagamentoDe(mes){return S.pagamentos.find(p=>daEpoca(p)&&p.mes===mes);}
-function calcMes(mes){
-  return S.jogos.filter(daEpoca).filter(j=>j.data.startsWith(mes)&&(j.estado==="realizado"||j.estado==="pago")).reduce((s,j)=>s+jogoTotal(j),0);
-}
-function formPagamento(mes){
-  const calc=calcMes(mes);
-  const[y,mm]=mes.split("-");
-  const dlg=$("#dlg");
-  dlg.innerHTML=`<h2>Pagamento de ${NOME_MES[+mm-1]} ${y}</h2>
-  <div class="mut sub">Valor calculado dos jogos do mês: <b class="val">${fmt(calc)}</b></div>
-  <label>Valor recebido (€)</label><input type="number" step="0.01" inputmode="decimal" id="pgV" value="${calc.toFixed(2)}">
-  <div class="mut sub" id="pgDif" style="margin-top:4px"></div>
-  <label>Data de pagamento</label><input type="date" id="pgD" value="${new Date().toISOString().slice(0,10)}">
-  <div class="btnrow"><button class="btn" id="pgCancel">Cancelar</button><button class="btn pri" id="pgSave">Confirmar pagamento</button></div>`;
-  const upd=()=>{const v=parseFloat($("#pgV").value);if(!isNaN(v)){const dif=v-calc;$("#pgDif").innerHTML=Math.abs(dif)<0.005?"✓ coincide com o calculado":`Diferença face ao calculado: <b class="${dif<0?"neg":"val"}">${dif>0?"+":""}${fmt(dif)}</b>`;}else $("#pgDif").textContent="";};
-  $("#pgV").oninput=upd;upd();
-  $("#pgCancel").onclick=()=>dlg.close();
-  $("#pgSave").onclick=()=>{
-    const v=parseFloat($("#pgV").value);
-    if(isNaN(v)){toast("Indica o valor recebido");return;}
-    S.pagamentos.push({id:uid(),epocaId:epAtiva().id,mes,valor:v,data:$("#pgD").value,up:Date.now()});
-    for(const j of S.jogos.filter(daEpoca))if(j.data.startsWith(mes)&&j.estado==="realizado"){j.estado="pago";j.dataPagamento=$("#pgD").value;j.up=Date.now();}
-    save();dlg.close();render();toast("Mês marcado como pago ✅");
-  };
-  dlg.showModal();
-}
-function drawChart(){
-  const c=$("#chart");if(!c)return;
-  const ctx=c.getContext("2d");
-  const cs=getComputedStyle(document.documentElement);
-  const acc=cs.getPropertyValue("--acc").trim(),mut=cs.getPropertyValue("--mut").trim();
-  const ms=mesesDaEpoca();
-  const vals=ms.map(m=>S.jogos.filter(daEpoca).filter(j=>j.estado!=="cancelado"&&j.data.startsWith(m))
-    .reduce((s,j)=>s+(j.atribuicoes||[]).filter(a=>membroSel==="all"||a.membroId===membroSel).reduce((x,a)=>x+atrFinal(j,a),0),0));
-  const max=Math.max(...vals,1);
-  const W=c.width,H=c.height,bw=W/ms.length;
-  ctx.clearRect(0,0,W,H);
-  let fill=acc;
-  if(ctx.createLinearGradient){const g=ctx.createLinearGradient(0,16,0,H-24);g.addColorStop(0,"#34d399");g.addColorStop(1,"#059669");fill=g;}
-  ctx.font="20px system-ui";ctx.textAlign="center";
-  ms.forEach((m,i)=>{
-    const h=(vals[i]/max)*(H-46);
-    ctx.fillStyle=fill;ctx.globalAlpha=vals[i]?1:.18;
-    ctx.beginPath();ctx.roundRect(i*bw+bw*.2,H-24-h,bw*.6,Math.max(h,3),4);ctx.fill();
-    ctx.globalAlpha=1;ctx.fillStyle=mut;
-    ctx.fillText(NOME_MES[+m.split("-")[1]-1].slice(0,3),i*bw+bw/2,H-6);
-    if(vals[i])ctx.fillText(Math.round(vals[i])+"€",i*bw+bw/2,H-30-h);
-  });
-}
-
-/* ============ Exportar / Importar ============ */
-function download(name,content,type){
-  const b=new Blob([content],{type});
-  const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();
-  setTimeout(()=>URL.revokeObjectURL(a.href),3000);
-}
-function exportCsv(){
-  const rows=[["Data","Dia","Hora","Tipo","Escalão","Equipa A","Equipa B","Local","Estado","Membro","Função","Almoço","Km","Valor (€)","Valor recebido (jogo)","Data pagamento"]];
-  for(const j of S.jogos.filter(daEpoca).sort((a,b)=>a.data.localeCompare(b.data)))
-    for(const a of j.atribuicoes||[]){
-      const m=S.membros.find(x=>x.id===a.membroId);
-      const alm=S.almocos.find(x=>x.id===a.almocoId);
-      rows.push([j.data,diaSem(j.data),j.hora||"",j.tipo,j.escalao,j.equipaA,j.equipaB,j.local||"",j.estado,m?m.nome:"",a.funcao,alm?alm.nome:"",a.km||"",atrFinal(j,a).toFixed(2).replace(".",","),temRecebido(j)?String(j.valorRecebido).replace(".",","):"",j.dataPagamento||""]);
-    }
-  const csv="﻿"+rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(";")).join("\r\n");
-  download(`jogos_${epAtiva().nome.replace("/","-")}.csv`,csv,"text/csv;charset=utf-8");
-  toast("CSV exportado");
-}
-function exportJson(){
-  download(`backup_arbitragem_${new Date().toISOString().slice(0,10)}.json`,JSON.stringify(S,null,2),"application/json");
-  toast("Backup exportado");
-}
-function importJson(e,mode){
-  const f=e.target.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=()=>{try{
-    let d=JSON.parse(r.result);
-    if(!d.tabela||!d.membros)throw 0;
-    d=migrate(d);
-    if(mode==="merge"){
-      S=mergeState(S,d);save();render();toast("Dados fundidos");
-    }else if(confirm("Substituir TODOS os dados atuais pelo backup?")){S=d;save();render();toast("Backup restaurado");}
-  }catch(_){toast("Ficheiro inválido");}
-  e.target.value="";};
-  r.readAsText(f);
-}
-function mergeState(a,b){
-  const out=JSON.parse(JSON.stringify(a));
-  out.tombs=[...(a.tombs||[]),...(b.tombs||[])];
-  const seen=new Set();
-  out.tombs=out.tombs.filter(t=>{const k=t.col+":"+t.id;if(seen.has(k))return false;seen.add(k);return true;});
-  const tombMap={};
-  for(const t of out.tombs)tombMap[t.col+":"+t.id]=t.t;
-  for(const col of ["epocas","jogos","despesas","multas","pagamentos","artigos","tabela","almocos","membros"]){
-    const map=new Map();
-    for(const it of (a[col]||[]))map.set(it.id,it);
-    for(const it of (b[col]||[])){
-      const ex=map.get(it.id);
-      if(!ex||((it.up||0)>(ex.up||0)))map.set(it.id,it);
-    }
-    out[col]=[...map.values()].filter(it=>{
-      const tt=tombMap[col+":"+it.id];
-      return !(tt&&tt>=(it.up||0));
-    });
-  }
-  out.categorias=[...new Set([...(a.categorias||[]),...(b.categorias||[])])];
-  if(!out.epocas.length)out.epocas=JSON.parse(JSON.stringify(a.epocas||b.epocas||[]));
-  if(!out.epocas.some(e=>e.id===out.settings.epocaAtivaId))out.settings.epocaAtivaId=out.epocas[0].id;
-  return out;
-}
-async function shareJson(){
-  const name=`backup_arbitragem_${new Date().toISOString().slice(0,10)}.json`;
-  const file=new File([JSON.stringify(S,null,2)],name,{type:"application/json"});
-  if(navigator.canShare&&navigator.canShare({files:[file]})){
-    try{await navigator.share({files:[file],title:"Backup arbitragem"});}catch(_){/*cancelado*/}
-  }else{download(name,JSON.stringify(S,null,2),"application/json");toast("Partilha não suportada — ficheiro descarregado");}
-}
-
-/* ============ Sincronização cloud (Supabase) ============ */
-const SYNCKEY="arbSync_v1";
-let SY;try{SY=JSON.parse(localStorage.getItem(SYNCKEY))||{};}catch(e){SY={};}
-function saveSY(){localStorage.setItem(SYNCKEY,JSON.stringify(SY));}
-const sbCfg=()=>{const u=SB_CONFIG.url||SY.url,k=SB_CONFIG.key||SY.key;return (u&&k)?{url:u,key:k}:null;};
-const syncOn=()=>!!(SY.url&&SY.key&&SY.email&&SY.pass);
-function soLeitura(){if(SY.ro){toast("Este dispositivo está em modo consulta 👀");return true}return false}
-let syncTimer=null,syncing=false;
-function scheduleSync(){if(!syncOn())return;clearTimeout(syncTimer);syncTimer=setTimeout(()=>syncNow(false),4000);}
-async function sbAuth(){
-  const now=Date.now()/1000;
-  if(SY.access&&SY.exp&&now<SY.exp-60)return SY.access;
-  if(SY.refresh){
-    try{
-      const r=await fetch(SY.url+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{apikey:SY.key,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:SY.refresh})});
-      if(r.ok){const d=await r.json();SY.access=d.access_token;SY.refresh=d.refresh_token||SY.refresh;SY.exp=now+(d.expires_in||3600);saveSY();return SY.access;}
-    }catch(_){}
-  }
-  const r=await fetch(SY.url+"/auth/v1/token?grant_type=password",{method:"POST",headers:{apikey:SY.key,"Content-Type":"application/json"},body:JSON.stringify({email:SY.email,password:SY.pass})});
-  if(!r.ok){
-    let det="";try{const j=await r.json();det=j.error_description||j.msg||j.message||"";}catch(_){/**/}
-    throw new Error("login falhou"+(det?": "+det:" — verifica email/password"));
-  }
-  const d=await r.json();SY.access=d.access_token;SY.refresh=d.refresh_token;SY.exp=Date.now()/1000+(d.expires_in||3600);saveSY();
-  return SY.access;
-}
-async function sbReq(method,path,body,headers={}){
-  const tk=await sbAuth();
-  const r=await fetch(SY.url+"/rest/v1/"+path,{method,headers:{apikey:SY.key,Authorization:"Bearer "+tk,"Content-Type":"application/json",...headers},body:body?JSON.stringify(body):undefined});
-  if(!r.ok){
-    let det="";try{const j=JSON.parse(await r.text());det=j.message||j.msg||j.hint||j.error_description||j.error||"";}catch(_){/**/}
-    if(r.status===404&&!det)det="tabela não existe — corre o supabase-setup.sql no SQL Editor";
-    throw new Error("servidor "+r.status+(det?": "+det:""));
-  }
-  const t=await r.text();
-  return t?JSON.parse(t):null;
-}
-async function syncNow(manual=true){
-  if(!syncOn()){if(manual)toast("Sincronização não configurada (Definições)");return;}
-  if(syncing)return; syncing=true;
-  try{
-    for(let tent=0;tent<3;tent++){
-      const rows=await sbReq("GET","estado?id=eq.1&select=rev,dados");
-      if(!rows||!rows.length){
-        if(SY.ro)break;
-        await sbReq("POST","estado",{id:1,rev:1,dados:S},{Prefer:"return=minimal"});
-        break;
-      }
-      const remoto=rows[0];
-      const antes=JSON.stringify(S);
-      const fund=mergeState(S,migrate(remoto.dados));
-      const mudou=JSON.stringify(fund)!==antes;
-      S=fund;save0();
-      if(mudou&&!$("#dlg").open)render();
-      if(SY.ro)break; // modo consulta: só recebe, nunca escreve
-      const res=await sbReq("PATCH",`estado?id=eq.1&rev=eq.${remoto.rev}`,{dados:S,rev:remoto.rev+1},{Prefer:"return=representation"});
-      if(res&&res.length)break;
-    }
-    SY.last=Date.now();SY.erro="";saveSY();
-    if(manual)toast("Sincronizado ☁️✅");
-  }catch(e){
-    SY.erro=String((e&&e.message)||e);saveSY();
-    if(manual)toast("Falha ao sincronizar: "+SY.erro);
-  }finally{syncing=false;}
-}
-window.addEventListener("online",()=>syncNow(false));
-// sincronizar quando a app volta ao ecrã (Android mantém a PWA em segundo plano)
-document.addEventListener("visibilitychange",()=>{if(!document.hidden)syncNow(false);});
-// e periodicamente enquanto estiver aberta
-setInterval(()=>{if(!document.hidden)syncNow(false);},5*60*1000);
-
-async function detetaPerfil(){
-  try{
-    const g=await sbReq("GET","estado?id=eq.1&select=id");
-    if(g&&g.length){
-      const r=await sbReq("PATCH","estado?id=eq.1",{updated_at:new Date().toISOString()},{Prefer:"return=representation"});
-      SY.ro=!(r&&r.length);
-    } else SY.ro=false;
-  }catch(_){SY.ro=false;}
-  saveSY();
-}
-
-/* ============ Ecrã de login ============ */
-function precisaLogin(){return !SY.skip&&!(SY.email&&SY.pass);}
-function mostraLogin(){
-  document.body.classList.add("login-on");
-  const div=document.createElement("div");div.id="loginScr";
-  const cfg=sbCfg();
-  div.innerHTML=`<div class="lbox">
-  <div class="emblem" style="width:64px;height:64px;font-size:1.35rem;margin:0 auto 12px;border-radius:20px">ER</div>
-  <div class="team" style="text-align:center">Elite Referees · AFA</div>
-  <h2 style="text-align:center;margin-bottom:14px;font-size:1.2rem;font-weight:800">Entrar</h2>
-  ${cfg?"":`<label>URL do projeto Supabase</label><input id="lgU" placeholder="https://xxxx.supabase.co">
-  <label>Chave anon (public)</label><input id="lgK" placeholder="eyJ…">`}
-  <label>Email</label><input id="lgE" type="email" autocomplete="username" value="${esc(SY.email||"")}">
-  <label>Password</label><input id="lgP" type="password" autocomplete="current-password">
-  <div class="neg sub" id="lgErr" style="margin-top:8px"></div>
-  <button class="btn pri" style="width:100%;margin-top:16px" id="lgGo">Entrar</button>
-  <button class="btn" style="width:100%;margin-top:8px" id="lgSkip">Usar sem conta (só neste dispositivo)</button></div>`;
-  document.body.appendChild(div);
-  $("#lgP").addEventListener("keydown",e=>{if(e.key==="Enter")$("#lgGo").click();});
-  $("#lgSkip").onclick=()=>{SY.skip=true;saveSY();fechaLogin();};
-  $("#lgGo").onclick=async()=>{
-    const err=$("#lgErr");err.textContent="";
-    const url=cfg?cfg.url:$("#lgU").value.trim().replace(/\/+$/,"");
-    const key=cfg?cfg.key:$("#lgK").value.trim();
-    const em=$("#lgE").value.trim(),pw=$("#lgP").value;
-    if(!url||!key||!em||!pw){err.textContent="Preenche todos os campos.";return;}
-    $("#lgGo").textContent="A entrar…";
-    SY.url=url;SY.key=key;SY.email=em;SY.pass=pw;SY.access="";SY.refresh="";SY.exp=0;SY.skip=false;saveSY();
-    try{
-      await sbAuth();
-      await detetaPerfil();
-      fechaLogin();
-      toast(SY.ro?"Sessão iniciada 👀 modo consulta":"Sessão iniciada ✏️ podes editar");
-    }catch(e){
-      $("#lgGo").textContent="Entrar";
-      err.textContent=String((e&&e.message)||e);
-    }
-  };
-}
-function fechaLogin(){
-  const e=$("#loginScr");if(e)e.remove();
-  document.body.classList.remove("login-on");
-  render();
-  if(syncOn())setTimeout(()=>syncNow(false),400);
-}
-
-/* ============ Definições ============ */
-function renderConfig(){
-  const ep=epAtiva();
-  const tarifas=S.tabela.filter(daEpoca);
-  const tipos=[...new Set(tarifas.map(r=>r.tipo))];
-  let h=`<div class="card"><label>Época ativa</label>
-  <select id="cEpSel">${S.epocas.map(e=>`<option value="${e.id}" ${e.id===ep.id?"selected":""}>${esc(e.nome)}</option>`).join("")}</select>
-  <label>Nome da época</label><input id="cEpoca" value="${esc(ep.nome)}">
-  <label>Ano de início da época (Setembro)</label><input type="number" id="cAno" value="${ep.anoInicio}">
-  <label>Eu sou (usado ao colar convocatórias)</label><select id="cEu"><option value="">— escolher —</option>${S.membros.map(m=>`<option value="${m.id}" ${m.id===S.settings.membroEuId?"selected":""}>${esc(m.nome)}</option>`).join("")}</select>
-  <button class="btn pri" style="margin-top:12px;width:100%" id="cSave">Guardar definições</button>
-  <button class="btn" style="margin-top:8px;width:100%" id="cNova">+ Nova época (copia as tarifas desta)</button></div>`;
-
-  h+=`<h3 class="sec">Membros da equipa</h3><div class="card" id="cMembros">`;
-  for(const m of S.membros)h+=`<div class="list-item" data-id="${m.id}"><span>${esc(m.nome)}${m.alias?` <span class="tag">msg: ${esc(m.alias)}</span>`:""}</span><span><button class="iconbtn" data-editm="${m.id}">✎</button><button class="iconbtn" data-delm="${m.id}">✕</button></span></div>`;
-  h+=`<div class="btnrow"><button class="btn" id="addM">+ Adicionar membro</button></div></div>`;
-
-  h+=`<h3 class="sec">Tabela de valores — ${esc(ep.nome)}</h3>`;
-  for(const t of tipos){
-    h+=`<div class="card"><b class="sub">${esc(t)}</b>`;
-    for(const r of tarifas.filter(x=>x.tipo===t))
-      h+=`<div class="list-item" data-id="${r.id}"><span class="sub">${esc(r.escalao)} · ${esc(r.funcao)}</span><span><b class="val">${fmt(r.valor)}</b> <button class="iconbtn" data-editt="${r.id}">✎</button><button class="iconbtn" data-delt="${r.id}">✕</button></span></div>`;
-    h+=`</div>`;
-  }
-  h+=`<div class="btnrow"><button class="btn pri" id="addT">+ Nova tarifa</button></div>`;
-
-  h+=`<h3 class="sec">Valores de almoço — ${esc(ep.nome)}</h3><div class="card">`;
-  for(const a of S.almocos.filter(daEpoca))
-    h+=`<div class="list-item" data-id="${a.id}"><span class="sub">${esc(a.nome)}</span><span><b class="val">${fmt(a.valor)}</b> <button class="iconbtn" data-edita="${a.id}">✎</button><button class="iconbtn" data-dela="${a.id}">✕</button></span></div>`;
-  h+=`<div class="btnrow"><button class="btn" id="addA">+ Novo almoço</button></div></div>`;
-
-  h+=`<h3 class="sec">Deslocações — ${esc(ep.nome)}</h3><div class="card">`;
-  (ep.deslocacoes||[]).forEach((dr,i)=>{
-    h+=`<div class="list-item"><span class="sub">${esc(dr.tipo)} · ${dr.modo==="fixo"?"valor fixo por jogo":"por km"}</span><span><b class="val">${fmt(dr.valor)}${dr.modo==="km"?"/km":""}</b> <button class="iconbtn" data-editd="${i}">✎</button><button class="iconbtn" data-deld="${i}">✕</button></span></div>`;
-  });
-  h+=`<div class="btnrow"><button class="btn" id="addD">+ Nova regra de deslocação</button></div></div>`;
-
-  h+=`<h3 class="sec">Sincronização cloud (Supabase)</h3>`;
-  if(SY.ro&&syncOn()){
-    h+=`<div class="card">
-    <div class="mut sub">☁️ Ligado como <b>${esc(SY.email||"")}</b> · 👀 só consulta · última sinc.: ${SY.last?new Date(SY.last).toLocaleString("pt-PT"):"—"}${SY.erro?` · <span class="neg">${esc(SY.erro)}</span>`:""}</div>
-    <div class="btnrow"><button class="btn" id="sySync">Sincronizar agora ☁️</button><button class="btn dngr" id="syLogout">Terminar sessão</button></div></div>`;
-  } else {
-    h+=`<div class="card">
-    <div class="mut sub" style="margin-bottom:4px">${syncOn()?`☁️ Ligado · última sinc.: ${SY.last?new Date(SY.last).toLocaleString("pt-PT"):"—"}${SY.erro?` · <span class="neg">${esc(SY.erro)}</span>`:""}`:"Não configurado — os dados ficam só neste dispositivo. Instruções de configuração (grátis) no LEIA-ME."}</div>
-    <label>URL do projeto</label><input id="syU" value="${esc(SY.url||"")}" placeholder="https://xxxx.supabase.co">
-    <label>Chave anon (public)</label><input id="syK" value="${esc(SY.key||"")}" placeholder="eyJ…">
-    <div class="grid2"><div><label>Email</label><input id="syE" value="${esc(SY.email||"")}"></div>
-    <div><label>Password</label><input type="password" id="syP" value="${esc(SY.pass||"")}"></div></div>
-    ${syncOn()?`<div class="mut sub" style="margin-top:10px">Perfil: <b>✏️ pode editar</b> — definido automaticamente pela conta (só o chefe consegue escrever na base de dados).</div>`:""}
-    <div class="btnrow"><button class="btn pri" id="syGo">Ligar e sincronizar</button>${syncOn()?`<button class="btn" id="syOff">Desligar</button>`:""}</div>
-    ${syncOn()?`<div class="btnrow"><button class="btn" id="sySync">Sincronizar agora ☁️</button><button class="btn dngr" id="syLogout">Terminar sessão</button></div>`:""}</div>`;
-  }
-
-  if(!SY.ro)h+=`<h3 class="sec">Zona de perigo</h3><div class="card"><button class="btn dngr" style="width:100%" id="reset">Apagar todos os dados</button></div>`;
-  $("#main").innerHTML=h;
-
-  $("#cEpSel").onchange=()=>{S.settings.epocaAtivaId=$("#cEpSel").value;membroSel="all";mesSel="all";mesRes="all";mesDesp="all";save();render();toast("Época ativa: "+epAtiva().nome);};
-  $("#cSave").onclick=()=>{
-    ep.nome=$("#cEpoca").value.trim()||ep.nome;
-    ep.anoInicio=parseInt($("#cAno").value)||ep.anoInicio;
-    ep.up=Date.now();
-    S.settings.membroEuId=$("#cEu").value;
-    save();render();toast("Definições guardadas");
-  };
-  $("#cNova").onclick=()=>{
-    const sugAno=ep.anoInicio+1;
-    const nome=prompt("Nome da nova época:",`${sugAno}/${String(sugAno+1).slice(2)}`);
-    if(!nome)return;
-    const ano=parseInt(prompt("Ano de início (Setembro):",String(sugAno)))||sugAno;
-    const nova={id:uid(),nome:nome.trim(),anoInicio:ano,valorKm:ep.valorKm,deslocacoes:JSON.parse(JSON.stringify(ep.deslocacoes||[])),up:Date.now()};
-    S.epocas.push(nova);
-    for(const r of S.tabela.filter(daEpoca))S.tabela.push({...r,id:uid(),epocaId:nova.id,up:Date.now()});
-    for(const a of S.almocos.filter(daEpoca))S.almocos.push({...a,id:uid(),epocaId:nova.id,up:Date.now()});
-    S.settings.epocaAtivaId=nova.id;
-    mesSel="all";mesRes="all";mesDesp="all";
-    save();render();toast(`Época ${nova.nome} criada com as tarifas copiadas`);
-  };
-  $("#addM").onclick=()=>formMembro();
-  $$("[data-editm]").forEach(b=>b.onclick=()=>formMembro(S.membros.find(m=>m.id===b.dataset.editm)));
-  $$("[data-delm]").forEach(b=>b.onclick=()=>{
-    const id=b.dataset.delm;
-    const emUso=S.jogos.some(j=>(j.atribuicoes||[]).some(a=>a.membroId===id))||S.despesas.some(d=>d.membroId===id);
-    if(emUso){toast("Membro tem registos — não pode ser removido");return;}
-    if(confirm("Remover membro?")){S.membros=S.membros.filter(m=>m.id!==id);tomb("membros",id);save();render();}
-  });
-  $("#addT").onclick=()=>formTarifa();
-  $$("[data-editt]").forEach(b=>b.onclick=()=>formTarifa(S.tabela.find(r=>r.id===b.dataset.editt)));
-  $$("[data-delt]").forEach(b=>b.onclick=()=>{if(confirm("Apagar tarifa?")){S.tabela=S.tabela.filter(r=>r.id!==b.dataset.delt);tomb("tabela",b.dataset.delt);save();render();}});
-  $("#addA").onclick=()=>formAlmoco();
-  $$("[data-edita]").forEach(b=>b.onclick=()=>formAlmoco(S.almocos.find(a=>a.id===b.dataset.edita)));
-  $$("[data-dela]").forEach(b=>b.onclick=()=>{if(confirm("Apagar valor de almoço?")){S.almocos=S.almocos.filter(a=>a.id!==b.dataset.dela);tomb("almocos",b.dataset.dela);save();render();}});
-  $("#addD").onclick=()=>formDesloc();
-  $$("[data-editd]").forEach(b=>b.onclick=()=>formDesloc(+b.dataset.editd));
-  $$("[data-deld]").forEach(b=>b.onclick=()=>{if(confirm("Apagar regra de deslocação?")){epAtiva().deslocacoes.splice(+b.dataset.deld,1);epAtiva().up=Date.now();save();render();}});
-  if($("#syGo"))$("#syGo").onclick=async()=>{
-    SY.url=$("#syU").value.trim().replace(/\/+$/,"");SY.key=$("#syK").value.trim();
-    SY.email=$("#syE").value.trim();SY.pass=$("#syP").value;
-    SY.access="";SY.refresh="";SY.exp=0;saveSY();
-    if(!syncOn()){toast("Preenche os 4 campos");return;}
-    toast("A ligar…");
-    try{await sbAuth();await detetaPerfil();}catch(e){toast(String((e&&e.message)||e));return;}
-    await syncNow(true);render();
-  };
-  if(syncOn()){
-    if($("#syOff"))$("#syOff").onclick=()=>{if(confirm("Desligar a sincronização? Os dados locais mantêm-se.")){SY={};saveSY();render();}};
-    if($("#sySync"))$("#sySync").onclick=async()=>{await syncNow(true);render();};
-    if($("#syLogout"))$("#syLogout").onclick=()=>{if(confirm("Terminar sessão? A app volta a pedir login na próxima abertura (os dados locais mantêm-se).")){SY={};saveSY();location.reload();}};
-  }
-  if($("#reset"))$("#reset").onclick=()=>{if(confirm("APAGAR TUDO? Esta ação não pode ser desfeita.")&&confirm("Tens a certeza? Faz backup primeiro (Resumo → Backup JSON)."))
-    {S=seed();save();render();toast("Dados repostos");}};
-}
-function formDesloc(idx){
-  const ep=epAtiva();
-  const novo=idx===undefined;
-  const d=novo?{tipo:"",modo:"fixo",valor:""}:{...ep.deslocacoes[idx]};
-  const dlg=$("#dlg");
-  dlg.innerHTML=`<h2>${novo?"Nova regra de deslocação":"Editar deslocação"} — ${esc(ep.nome)}</h2>
-  <label>Tipo de jogo</label><input id="dlT2" list="dlTT" value="${esc(d.tipo)}" placeholder="ex: Distrital"><datalist id="dlTT">${[...new Set(S.tabela.filter(daEpoca).map(x=>x.tipo))].map(t=>`<option value="${esc(t)}">`).join("")}</datalist>
-  <label>Modo</label><select id="dlM"><option value="fixo" ${d.modo==="fixo"?"selected":""}>Valor fixo por jogo</option><option value="km" ${d.modo==="km"?"selected":""}>Por km (€/km)</option></select>
-  <label>Valor (€)</label><input type="number" step="0.01" inputmode="decimal" id="dlV" value="${d.valor}">
-  <div class="btnrow"><button class="btn" id="dlCancel">Cancelar</button><button class="btn pri" id="dlSave">Guardar</button></div>`;
-  $("#dlCancel").onclick=()=>dlg.close();
-  $("#dlSave").onclick=()=>{
-    const tipo=$("#dlT2").value.trim(),modo=$("#dlM").value,valor=parseFloat($("#dlV").value);
-    if(!tipo||isNaN(valor)){toast("Preenche todos os campos");return;}
-    ep.deslocacoes=ep.deslocacoes||[];
-    const dup=ep.deslocacoes.findIndex((x,i)=>norm(x.tipo)===norm(tipo)&&(novo||i!==idx));
-    if(dup>=0){toast("Já existe regra para esse tipo de jogo");return;}
-    if(novo)ep.deslocacoes.push({tipo,modo,valor}); else ep.deslocacoes[idx]={tipo,modo,valor};
-    ep.up=Date.now();
-    save();dlg.close();render();toast("Deslocação guardada");
-  };
-  dlg.showModal();
-}
-function formMembro(m){
-  const novo=!m; m=m?{...m}:{id:uid(),nome:"",alias:""};
-  const dlg=$("#dlg");
-  dlg.innerHTML=`<h2>${novo?"Novo membro":"Editar membro"}</h2>
-  <label>Nome</label><input id="mN" value="${esc(m.nome)}" placeholder="ex: Ânia Gomes">
-  <label>Nome nas convocatórias (opcional)</label><input id="mA" value="${esc(m.alias||"")}" placeholder="ex: A Gomes">
-  <div class="mut sub" style="margin-top:4px">Dica: usa nome + apelido para a app reconhecer sozinha "A Gomes", "X Bastos", etc. Ela também aprende quando confirmas uma convocatória.</div>
-  <div class="btnrow"><button class="btn" id="mCancel">Cancelar</button><button class="btn pri" id="mSave">Guardar</button></div>`;
-  $("#mCancel").onclick=()=>dlg.close();
-  $("#mSave").onclick=()=>{
-    const nome=$("#mN").value.trim();
-    if(!nome){toast("Falta o nome");return;}
-    Object.assign(m,{nome,alias:$("#mA").value.trim(),up:Date.now()});
-    if(novo)S.membros.push(m); else S.membros[S.membros.findIndex(x=>x.id===m.id)]=m;
-    save();dlg.close();render();toast("Membro guardado");
-  };
-  dlg.showModal();
-}
-function formTarifa(r){
-  const novo=!r; r=r?{...r}:{id:uid(),epocaId:epAtiva().id,tipo:"Distrital",escalao:"",funcao:"A",valor:""};
-  const dlg=$("#dlg");
-  dlg.innerHTML=`<h2>${novo?"Nova tarifa":"Editar tarifa"} — ${esc(epAtiva().nome)}</h2>
-  <label>Tipo de jogo</label><input id="tT" list="dlT" value="${esc(r.tipo)}"><datalist id="dlT">${[...new Set(S.tabela.filter(daEpoca).map(x=>x.tipo))].map(t=>`<option value="${esc(t)}">`).join("")}</datalist>
-  <label>Escalão</label><input id="tE" value="${esc(r.escalao)}">
-  <label>Função</label><select id="tF">${FUNCOES.map(f=>`<option ${f===r.funcao?"selected":""}>${f}</option>`).join("")}</select>
-  <label>Valor (€)</label><input type="number" step="0.01" inputmode="decimal" id="tV" value="${r.valor}">
-  <div class="btnrow"><button class="btn" id="tCancel">Cancelar</button><button class="btn pri" id="tSave">Guardar</button></div>`;
-  $("#tCancel").onclick=()=>dlg.close();
-  $("#tSave").onclick=()=>{
-    const tipo=$("#tT").value.trim(),escalao=$("#tE").value.trim(),funcao=$("#tF").value,valor=parseFloat($("#tV").value);
-    if(!tipo||!escalao||isNaN(valor)){toast("Preenche todos os campos");return;}
-    const dup=S.tabela.find(x=>x.id!==r.id&&x.epocaId===r.epocaId&&norm(x.tipo)===norm(tipo)&&norm(x.escalao)===norm(escalao)&&norm(x.funcao)===norm(funcao));
-    if(dup){toast("Já existe uma tarifa com esta combinação");return;}
-    Object.assign(r,{tipo,escalao,funcao,valor,up:Date.now()});
-    if(novo)S.tabela.push(r); else S.tabela[S.tabela.findIndex(x=>x.id===r.id)]=r;
-    save();dlg.close();render();toast("Tarifa guardada");
-  };
-  dlg.showModal();
-}
-function formAlmoco(a){
-  const novo=!a; a=a?{...a}:{id:uid(),epocaId:epAtiva().id,nome:"",valor:""};
-  const dlg=$("#dlg");
-  dlg.innerHTML=`<h2>${novo?"Novo almoço":"Editar almoço"} — ${esc(epAtiva().nome)}</h2>
-  <label>Nome (ex: Nacional +100km)</label><input id="aN" value="${esc(a.nome)}">
-  <label>Valor (€)</label><input type="number" step="0.01" inputmode="decimal" id="aV" value="${a.valor}">
-  <div class="btnrow"><button class="btn" id="aCancel">Cancelar</button><button class="btn pri" id="aSave">Guardar</button></div>`;
-  $("#aCancel").onclick=()=>dlg.close();
-  $("#aSave").onclick=()=>{
-    const nome=$("#aN").value.trim(),valor=parseFloat($("#aV").value);
-    if(!nome||isNaN(valor)){toast("Preenche todos os campos");return;}
-    Object.assign(a,{nome,valor,up:Date.now()});
-    if(novo)S.almocos.push(a); else S.almocos[S.almocos.findIndex(x=>x.id===a.id)]=a;
-    save();dlg.close();render();toast("Guardado");
-  };
-  dlg.showModal();
-}
-
-/* ============ PWA ============ */
-if("serviceWorker" in navigator && location.protocol.startsWith("http"))
-  navigator.serviceWorker.register("sw.js").catch(()=>{});
-// pedir armazenamento persistente (protege os dados de limpezas automáticas do sistema)
-if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
-
-if(precisaLogin())mostraLogin();
-else{render();if(syncOn())setTimeout(()=>syncNow(false),800);}
-</script>
+<!-- Credenciais do Supabase: ficheiro local, NÃO versionado (ver .gitignore e config.example.js).
+     Se não existir, a app funciona na mesma e o ecrã de login pede URL + chave. -->
+<script src="config.local.js" onerror="window.SB_CONFIG=window.SB_CONFIG||null"></script>
+<!-- Motor: funções puras (cálculo, fusão, parser, calendário). Ver engine.js. -->
+<script src="engine.js"></script>
+<!-- Tradução entre as tabelas da base de dados e os ecrãs. Ver dados.js. -->
+<script src="dados.js"></script>
+<!-- A app, por áreas. A ordem importa: cada ficheiro pode usar o que os anteriores definem. -->
+<script src="js/base.js"></script>
+<script src="js/calculo.js"></script>
+<script src="js/jogos.js"></script>
+<script src="js/despesas-multas.js"></script>
+<script src="js/resumo.js"></script>
+<script src="js/bd.js"></script>
+<script src="js/offline.js"></script>
+<script src="js/conta.js"></script>
+<script src="js/sessao.js"></script>
+<script src="js/definicoes.js"></script>
+<script src="js/avisos.js"></script>
+<script src="js/arranque.js"></script>
 </body>
 </html>

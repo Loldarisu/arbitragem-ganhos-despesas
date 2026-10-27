@@ -1,7 +1,8 @@
 {
-  "name": "Elite Referees AFA — Ganhos & Multas",
-  "short_name": "Elite Refs",
-  "description": "Gestão de ganhos e despesas de arbitragem de futebol",
+  "id": "./index.html",
+  "name": "Arbitragem — Ganhos & Despesas",
+  "short_name": "Arbitragem",
+  "description": "Jogos, ganhos, despesas e multas de arbitragem de futebol",
   "lang": "pt-PT",
   "start_url": "./index.html",
   "scope": "./",
@@ -9,17 +10,25 @@
   "background_color": "#0a120e",
   "theme_color": "#0a120e",
   "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon-mono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "monochrome" },
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "share_target": {
+    "action": "./index.html",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": { "title": "title", "text": "text", "url": "url" }
+  },
+  "shortcuts": [
+    { "name": "Colar convocatória", "short_name": "Convocatória", "url": "./index.html?acao=convocatoria",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }] },
+    { "name": "Novo jogo", "short_name": "Novo jogo", "url": "./index.html?acao=novo-jogo",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }] },
+    { "name": "Resumo", "short_name": "Resumo", "url": "./index.html?separador=resumo",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }] }
   ]
 }

@@ -1,0 +1,15 @@
+{
+  "name": "arbitragem-ganhos-despesas",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PWA para gerir jogos, ganhos, despesas e multas de arbitragem de futebol",
+  "license": "MIT",
+  "scripts": {
+    "servir": "node tests/servidor.mjs . 8099",
+    "test": "node tests/correr.mjs",
+    "capturas": "node tests/capturas.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.47.0"
+  }
+}

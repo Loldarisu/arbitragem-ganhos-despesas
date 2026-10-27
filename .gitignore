@@ -18,3 +18,11 @@ Desktop.ini
 *.bak
 *.tmp
 backup*.json
+
+# Dependências e resultados de testes
+node_modules/
+test-results/
+playwright-report/
+
+# Supabase CLI (dados locais da ligação ao projeto)
+supabase/.temp/
